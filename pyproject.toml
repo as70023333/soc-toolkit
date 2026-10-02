@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soc-toolkit"
+version = "1.0.0"
+description = "Small, focused SOC tools for Microsoft Sentinel, Defender and Entra ID: a KQL hunting library, an Entra ID hygiene audit, bulk IOC enrichment, a Defender device-health report and a secrets pre-commit hook."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Alex S., Security" }]
+keywords = ["security", "soc", "microsoft-sentinel", "defender", "entra-id", "kql", "threat-intelligence", "secrets", "pre-commit"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/as70023333/soc-toolkit"
+Issues = "https://github.com/as70023333/soc-toolkit/issues"
+
+[project.scripts]
+entra-audit = "soc_toolkit.entra_audit.cli:main"
+ioc-enrich = "soc_toolkit.ioc_enrich.cli:main"
+mde-health = "soc_toolkit.mde_health.cli:main"
+secrets-scan = "soc_toolkit.secrets_scan.cli:main"
+kql-catalog = "soc_toolkit.kql_catalog.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["soc_toolkit*"]
+
+[tool.setuptools.package-data]
+"soc_toolkit.entra_audit" = ["*.json"]
+"soc_toolkit.mde_health" = ["*.json"]
+"soc_toolkit.ioc_enrich" = ["*.json"]
+"soc_toolkit.secrets_scan" = ["*.toml"]

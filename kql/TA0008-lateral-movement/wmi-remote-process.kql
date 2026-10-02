@@ -1,0 +1,27 @@
+// Title: WMI process creation spawning shells or LOLBins
+// Id: KQL-TA0008-002
+// Tactic: TA0008 Lateral Movement
+// Techniques: T1047
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: WmiPrvSE.exe (the WMI provider host) starting command shells, PowerShell, script
+//   hosts or LOLBins. Remote WMI (wmic /node:, Invoke-WmiMethod, Impacket wmiexec) shows up this
+//   way on the target machine.
+// False positives: Configuration Manager, monitoring and inventory agents that use WMI to run
+//   scripts. They repeat the same command lines on many devices.
+// Tuning: Put stable management command fragments in Exclusions after reviewing a week of data.
+// Response: Find the source: the logon that preceded the process (DeviceLogonEvents with
+//   LogonType Network around the same time) shows which machine and account issued the command.
+// References: https://attack.mitre.org/techniques/T1047/
+let Lookback = 7d;
+let Exclusions = dynamic(["\\ccm\\", "SCCM", "CcmExec", "IntuneManagementExtension"]);
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where InitiatingProcessFileName =~ "wmiprvse.exe"
+| where FileName in~ ("cmd.exe", "powershell.exe", "pwsh.exe", "mshta.exe", "rundll32.exe", "regsvr32.exe",
+                      "wscript.exe", "cscript.exe", "certutil.exe", "bitsadmin.exe")
+| where not(ProcessCommandLine has_any (Exclusions))
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessCommandLine, ReportId
+| order by Timestamp desc

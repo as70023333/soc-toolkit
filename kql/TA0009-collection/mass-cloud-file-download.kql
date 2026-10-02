@@ -1,0 +1,37 @@
+// Title: Unusual mass download from SharePoint or OneDrive
+// Id: KQL-TA0009-002
+// Tactic: TA0009 Collection
+// Techniques: T1530, T1213.002
+// Platform: Sentinel
+// Tables: OfficeActivity
+// Severity: Medium
+// Lookback: 1d
+// Description: A user who downloaded or synced at least 200 distinct files in the last day and
+//   more than three times their busiest day of the previous two weeks. Data theft before a
+//   departure, or an attacker with a stolen session harvesting files.
+// False positives: A new OneDrive sync client set-up, a laptop replacement, or a project kick-off
+//   where someone syncs a large library for the first time.
+// Tuning: Adjust MinFiles to your environment; exclude sync from managed devices if you only care
+//   about browser and API downloads.
+// Response: Check the IP addresses and user agent against the user's normal pattern; if
+//   unexpected, revoke sessions and review which sites were accessed.
+// References: https://attack.mitre.org/techniques/T1530/
+let Lookback = 1d;
+let Baseline = 14d;
+let MinFiles = 200;
+let Recent = OfficeActivity
+    | where TimeGenerated > ago(Lookback)
+    | where Operation in ("FileDownloaded", "FileSyncDownloadedFull")
+    | summarize Files = dcount(OfficeObjectId), Sites = dcount(Site_Url), IPs = make_set(ClientIP, 10),
+                UserAgents = make_set(UserAgent, 5) by UserId;
+let History = OfficeActivity
+    | where TimeGenerated between (ago(Baseline) .. ago(Lookback))
+    | where Operation in ("FileDownloaded", "FileSyncDownloadedFull")
+    | summarize DailyFiles = dcount(OfficeObjectId) by UserId, bin(TimeGenerated, 1d)
+    | summarize AvgDailyFiles = avg(DailyFiles), MaxDailyFiles = max(DailyFiles) by UserId;
+Recent
+| join kind=leftouter History on UserId
+| extend AvgDailyFiles = coalesce(AvgDailyFiles, real(0)), MaxDailyFiles = coalesce(MaxDailyFiles, long(0))
+| where Files >= MinFiles and Files > 3 * MaxDailyFiles
+| project UserId, Files, Sites, MaxDailyFiles, AvgDailyFiles = round(AvgDailyFiles, 1), IPs, UserAgents
+| order by Files desc

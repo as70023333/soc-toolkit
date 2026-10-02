@@ -1,0 +1,31 @@
+// Title: Successful sign-in over a legacy authentication protocol
+// Id: KQL-TA0001-004
+// Tactic: TA0001 Initial Access
+// Techniques: T1078.004
+// Platform: Sentinel
+// Tables: SigninLogs
+// Severity: Medium
+// Lookback: 7d
+// Description: Successful sign-ins over protocols that cannot do MFA (IMAP, POP3, authenticated
+//   SMTP, Exchange ActiveSync with basic auth, older Office clients). A password alone opens the
+//   account, so these are a favorite path after password spraying.
+// False positives: Multifunction printers and line-of-business apps that still send mail with
+//   authenticated SMTP; old mobile mail clients.
+// Tuning: Exclude known service accounts and printer IPs; group by UserPrincipalName instead of IP
+//   to build a migration list.
+// Response: Block legacy authentication with Conditional Access. If the IP is unknown, treat the
+//   account as compromised.
+// References: https://learn.microsoft.com/entra/identity/conditional-access/policy-block-legacy-authentication
+let Lookback = 7d;
+let LegacyClients = dynamic(["Authenticated SMTP", "AutoDiscover", "Exchange ActiveSync", "Exchange Online PowerShell",
+    "Exchange Web Services", "IMAP4", "MAPI Over HTTP", "Offline Address Book", "Other clients",
+    "Outlook Anywhere (RPC over HTTP)", "POP3", "Reporting Web Services", "Universal Outlook"]);
+SigninLogs
+| where TimeGenerated > ago(Lookback)
+| where ClientAppUsed in (LegacyClients)
+| summarize Attempts = count(), Successes = countif(ResultType == "0"), Users = dcount(UserPrincipalName),
+            UserSample = make_set(UserPrincipalName, 10), Clients = make_set(ClientAppUsed, 10),
+            FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
+            by IPAddress, Location
+| where Successes > 0
+| order by Successes desc

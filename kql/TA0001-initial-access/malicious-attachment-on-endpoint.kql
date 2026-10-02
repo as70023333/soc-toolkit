@@ -1,0 +1,38 @@
+// Title: Malicious email attachment written to or run on a device
+// Id: KQL-TA0001-002
+// Tactic: TA0001 Initial Access
+// Techniques: T1566.001, T1204.002
+// Platform: Defender XDR
+// Tables: EmailAttachmentInfo, DeviceFileEvents, DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Attachments that Defender for Office 365 flagged as malware, matched by SHA-256 to
+//   files saved on endpoints or processes started from them. Answers "did the attachment that got
+//   through actually land anywhere, and did it run?".
+// False positives: Rare. A security analyst detonating the sample on a test machine; a file that
+//   was flagged in mail but is a known-good installer (check the verdict in the Defender portal).
+// Tuning: Widen ThreatTypes to include "Phish" to catch HTML credential-harvesting attachments.
+// Response: Isolate devices where Evidence is "File executed", collect an investigation package,
+//   add the hash as a block indicator, and purge the message tenant-wide.
+// References: https://learn.microsoft.com/defender-xdr/advanced-hunting-emailattachmentinfo-table
+let Lookback = 7d;
+let MaliciousAttachments = EmailAttachmentInfo
+    | where Timestamp > ago(Lookback)
+    | where ThreatTypes has "Malware"
+    | where isnotempty(SHA256)
+    | summarize AttachmentName = take_any(FileName), Sender = take_any(SenderFromAddress),
+                Recipients = dcount(RecipientEmailAddress) by SHA256;
+let MaliciousHashes = MaliciousAttachments | project SHA256;
+union
+    (DeviceFileEvents
+        | where Timestamp > ago(Lookback)
+        | where SHA256 in (MaliciousHashes)
+        | extend Evidence = "File written to disk"),
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where SHA256 in (MaliciousHashes)
+        | extend Evidence = "File executed")
+| join kind=inner MaliciousAttachments on SHA256
+| project Timestamp, DeviceName, DeviceId, Evidence, FileName, FolderPath, SHA256, AttachmentName, Sender,
+          Recipients, InitiatingProcessFileName, InitiatingProcessAccountName, ReportId
+| order by Timestamp desc

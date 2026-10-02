@@ -1,0 +1,41 @@
+// Title: Privileged Entra ID role assigned
+// Id: KQL-TA0004-001
+// Tactic: TA0004 Privilege Escalation
+// Techniques: T1098.003
+// Platform: Sentinel
+// Tables: AuditLogs
+// Severity: High
+// Lookback: 7d
+// Description: Direct or eligible assignments of Entra ID roles, with privileged roles (Global
+//   Administrator, Privileged Role Administrator, Exchange Administrator...) flagged. PIM
+//   activations are excluded: they are the normal, approved way to use a role.
+// False positives: Planned onboarding of administrators. Check for a matching change ticket.
+// Tuning: Keep PrivilegedRoles in sync with your tiering model; alert only where IsPrivileged is
+//   true, or where the actor is not in your identity team.
+// Response: Confirm with the actor. If unexpected, remove the assignment, reset the actor's
+//   credentials and review everything the new admin did.
+// References: https://learn.microsoft.com/entra/identity/role-based-access-control/privileged-roles-permissions
+let Lookback = 7d;
+let PrivilegedRoles = dynamic(["Global Administrator", "Privileged Role Administrator",
+    "Privileged Authentication Administrator", "Security Administrator", "Exchange Administrator",
+    "SharePoint Administrator", "User Administrator", "Application Administrator",
+    "Cloud Application Administrator", "Authentication Administrator", "Conditional Access Administrator",
+    "Hybrid Identity Administrator", "Intune Administrator", "Helpdesk Administrator",
+    "Domain Name Administrator", "Partner Tier2 Support"]);
+AuditLogs
+| where TimeGenerated > ago(Lookback)
+| where Category == "RoleManagement"
+| where OperationName startswith "Add member to role" or OperationName startswith "Add eligible member to role"
+| where not(OperationName has "PIM activation")
+| where Result =~ "success"
+| extend ActorUser = tostring(InitiatedBy.user.userPrincipalName), ActorApp = tostring(InitiatedBy.app.displayName)
+| extend Actor = iff(isnotempty(ActorUser), ActorUser, ActorApp)
+| extend TargetUser = tostring(TargetResources[0].userPrincipalName), TargetName = tostring(TargetResources[0].displayName)
+// The role name is one of the modified properties on the target.
+| mv-apply Prop = TargetResources[0].modifiedProperties on (
+    summarize RoleRaw = take_anyif(tostring(Prop.newValue), tostring(Prop.displayName) == "Role.DisplayName")
+)
+| extend RoleName = trim(@'"', RoleRaw)
+| extend IsPrivileged = RoleName in (PrivilegedRoles)
+| project TimeGenerated, OperationName, Actor, TargetUser, TargetName, RoleName, IsPrivileged, CorrelationId
+| order by IsPrivileged desc, TimeGenerated desc

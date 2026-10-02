@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install (no third-party dependencies)
+        run: python -m pip install .
+      - name: Unit tests
+        run: python -m unittest discover -s tests -t . -v
+
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install .
+      - name: Lint the KQL library
+        run: kql-catalog lint
+      - name: KQL catalog is up to date
+        run: kql-catalog check
+      - name: Organization secret rules pass their examples
+        run: secrets-scan --test-rules
+      - name: Scan this repository for secrets
+        run: secrets-scan --all
+      - name: Demo runs (offline)
+        run: |
+          entra-audit --demo --out reports --fail-on none
+          mde-health --demo --out reports --fail-on none
+          ioc-enrich --demo examples/incident-notes.txt --out reports/iocs.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-reports
+          path: reports/

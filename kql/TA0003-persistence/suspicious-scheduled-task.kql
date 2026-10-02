@@ -1,0 +1,39 @@
+// Title: Scheduled task created to run a script, LOLBin or user-writable binary
+// Id: KQL-TA0003-002
+// Tactic: TA0003 Persistence
+// Techniques: T1053.005
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents, DeviceEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: Scheduled tasks created with schtasks.exe or through the Task Scheduler API whose
+//   action launches PowerShell, cmd, mshta, script hosts, rundll32 or a binary in a user-writable
+//   folder, or fetches something from the internet. A classic persistence and lateral execution
+//   method.
+// False positives: Software updaters (Google, Adobe, browser updaters) and admin scripts deployed
+//   by GPO or Intune. They are created by the same parent on many devices.
+// Tuning: Exclude task names from your management tooling; review TaskContent rather than the
+//   command line for API-created tasks.
+// Response: Read the full task (schtasks /query /tn <name> /xml), check its binary, delete the task
+//   if malicious and hunt for the same task name fleet-wide.
+// References: https://attack.mitre.org/techniques/T1053/005/
+let Lookback = 7d;
+let Suspicious = @"(?i)(powershell|pwsh|cmd(\.exe)?\s+/c|mshta|wscript|cscript|rundll32|regsvr32|certutil|bitsadmin|\\AppData\\|\\Temp\\|\\Users\\Public\\|\\ProgramData\\|https?://)";
+union
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where FileName =~ "schtasks.exe" and ProcessCommandLine has "/create"
+        | where ProcessCommandLine matches regex Suspicious
+        | extend TaskName = extract(@'(?i)/tn\s+("[^"]+"|\S+)', 1, ProcessCommandLine),
+                 TaskAction = ProcessCommandLine,
+                 Source = "schtasks.exe"),
+    (DeviceEvents
+        | where Timestamp > ago(Lookback)
+        | where ActionType == "ScheduledTaskCreated"
+        | extend TaskName = tostring(parse_json(AdditionalFields).TaskName),
+                 TaskAction = tostring(parse_json(AdditionalFields).TaskContent),
+                 Source = "Task Scheduler API"
+        | where TaskAction matches regex Suspicious)
+| project Timestamp, DeviceName, DeviceId, Source, TaskName, TaskAction, InitiatingProcessFileName,
+          InitiatingProcessCommandLine, InitiatingProcessAccountName, ReportId
+| order by Timestamp desc

@@ -1,0 +1,46 @@
+// Title: Burst of domain reconnaissance commands
+// Id: KQL-TA0007-001
+// Tactic: TA0007 Discovery
+// Techniques: T1087.002, T1069.002, T1482, T1016, T1033
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: Medium
+// Lookback: 1d
+// Description: Four or more different reconnaissance commands (whoami, net group /domain, nltest
+//   /dclist, setspn -q, ipconfig /all, AD PowerShell cmdlets...) from the same account on the same
+//   device within 15 minutes. Individually normal; together they are an intruder getting their
+//   bearings right after initial access.
+// False positives: Helpdesk staff troubleshooting; inventory and compliance scripts (these run the
+//   same set on many devices at the same time).
+// Tuning: Raise MinDistinct to 5 if helpdesk activity is noisy; exclude your RMM agent as a parent.
+// Response: Check what launched the commands (InitiatingProcessFileName). A web server, Office app
+//   or unknown binary as parent is a strong sign of compromise.
+// References: https://attack.mitre.org/tactics/TA0007/
+let Lookback = 1d;
+let Window = 15m;
+let MinDistinct = 4;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| extend Cmd = tolower(ProcessCommandLine)
+| extend Recon = case(
+    FileName =~ "whoami.exe", "whoami",
+    FileName in~ ("net.exe", "net1.exe") and Cmd contains "group" and Cmd contains "/domain", "net group /domain",
+    FileName in~ ("net.exe", "net1.exe") and Cmd contains "user" and Cmd contains "/domain", "net user /domain",
+    FileName in~ ("net.exe", "net1.exe") and Cmd contains "localgroup" and Cmd contains "administrators", "net localgroup administrators",
+    FileName in~ ("net.exe", "net1.exe") and Cmd contains " view", "net view",
+    FileName =~ "nltest.exe" and Cmd has_any ("dclist", "domain_trusts", "dsgetdc"), "nltest",
+    FileName =~ "systeminfo.exe", "systeminfo",
+    FileName =~ "ipconfig.exe" and Cmd contains "/all", "ipconfig /all",
+    FileName in~ ("quser.exe", "query.exe"), "query user",
+    FileName =~ "arp.exe" and Cmd matches regex @"\s-a(\s|$)", "arp -a",
+    FileName =~ "dsquery.exe", "dsquery",
+    FileName =~ "setspn.exe" and Cmd contains "-q", "setspn -q",
+    FileName in~ ("powershell.exe", "pwsh.exe") and Cmd has_any ("get-aduser", "get-adcomputer", "get-adgroupmember",
+        "get-addomaincontroller", "get-adtrust"), "PowerShell AD cmdlets",
+    "")
+| where isnotempty(Recon)
+| summarize Commands = dcount(Recon), CommandSet = make_set(Recon), Sample = make_set(ProcessCommandLine, 15),
+            Parents = make_set(InitiatingProcessFileName, 5), FirstSeen = min(Timestamp), LastSeen = max(Timestamp)
+            by DeviceName, DeviceId, AccountName, bin(Timestamp, Window)
+| where Commands >= MinDistinct
+| order by Commands desc

@@ -1,0 +1,33 @@
+// Title: Shadow copy and backup deletion (inhibit system recovery)
+// Id: KQL-TA0040-001
+// Tactic: TA0040 Impact
+// Techniques: T1490
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Commands that destroy local recovery options: vssadmin delete shadows or resizing
+//   shadow storage, wmic shadowcopy delete, Win32_ShadowCopy deletion from PowerShell, bcdedit
+//   turning off recovery, and wbadmin deleting backups. Nearly every ransomware family runs these
+//   seconds before encrypting.
+// False positives: Backup software maintenance and disk-cleanup scripts, usually running as SYSTEM
+//   from the backup agent's folder on a schedule.
+// Tuning: Exclude the backup agent's parent process only after confirming the exact command line.
+// Response: Treat as an encryption in progress: isolate the device immediately (and its neighbours
+//   if the same account is active elsewhere) and disable the account that ran the command.
+// References: https://attack.mitre.org/techniques/T1490/
+let Lookback = 7d;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where (FileName =~ "vssadmin.exe" and ProcessCommandLine has "delete" and ProcessCommandLine has "shadows")
+    or (FileName =~ "vssadmin.exe" and ProcessCommandLine has "resize" and ProcessCommandLine has "shadowstorage")
+    or (FileName =~ "wmic.exe" and ProcessCommandLine has "shadowcopy" and ProcessCommandLine has "delete")
+    or (FileName in~ ("powershell.exe", "pwsh.exe") and ProcessCommandLine has "Win32_ShadowCopy"
+        and ProcessCommandLine has_any ("Delete", "Remove-WmiObject", "Remove-CimInstance"))
+    or (FileName =~ "bcdedit.exe" and ProcessCommandLine has_any ("recoveryenabled", "bootstatuspolicy")
+        and ProcessCommandLine has_any ("no", "ignoreallfailures"))
+    or (FileName =~ "wbadmin.exe" and ProcessCommandLine has "delete"
+        and ProcessCommandLine has_any ("catalog", "systemstatebackup", "backup"))
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName,
+          InitiatingProcessCommandLine, ReportId
+| order by Timestamp desc

@@ -1,0 +1,37 @@
+// Title: Kerberoasting - many RC4 service tickets requested by one account
+// Id: KQL-TA0006-004
+// Tactic: TA0006 Credential Access
+// Techniques: T1558.003
+// Platform: Sentinel
+// Tables: SecurityEvent
+// Severity: High
+// Lookback: 1d
+// Description: Event 4769 (Kerberos service ticket requested) with RC4 encryption (0x17) for many
+//   different user-based service accounts from one requester. Attackers request these tickets to
+//   crack the service account passwords offline.
+// False positives: Old applications that only support RC4; vulnerability scanners. Both request the
+//   same few services repeatedly rather than many different ones.
+// Tuning: Requires "Audit Kerberos Service Ticket Operations" on domain controllers. Lower
+//   MinServices to 2 for sensitive environments; exclude scanner accounts.
+// Response: Identify the requester's device, reset the passwords of the requested service accounts
+//   (long random passwords or gMSAs), and disable RC4 where possible.
+// References: https://attack.mitre.org/techniques/T1558/003/
+let Lookback = 1d;
+let MinServices = 5;
+SecurityEvent
+| where TimeGenerated > ago(Lookback)
+| where EventID == 4769
+// Read the values from the EventData XML; output names avoid clashing with SecurityEvent columns.
+| parse EventData with * 'TicketEncryptionType">' EncType '<' *
+| parse EventData with * 'ServiceName">' SvcName '<' *
+| parse EventData with * 'TargetUserName">' Requestor '<' *
+| parse EventData with * 'IpAddress">' ClientAddress '<' *
+| parse EventData with * 'Status">' TicketStatus '<' *
+| where EncType == "0x17" and TicketStatus == "0x0"
+// Computer accounts end in $ and krbtgt is the TGT service; neither is crackable this way.
+| where not(SvcName endswith "$") and SvcName !~ "krbtgt"
+| summarize Services = dcount(SvcName), ServiceSample = make_set(SvcName, 20), Requests = count(),
+            FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
+            by Requestor, ClientAddress, Computer
+| where Services >= MinServices
+| order by Services desc

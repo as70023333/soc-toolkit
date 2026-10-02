@@ -1,0 +1,37 @@
+// Title: Remote execution through PsExec-style services and Impacket
+// Id: KQL-TA0008-001
+// Tactic: TA0008 Lateral Movement
+// Techniques: T1021.002, T1569.002
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Three views of remote service execution: the PsExec/PAExec/RemCom service binary
+//   running on a target, PsExec launched on a source (including renamed copies), and Impacket
+//   smbexec/wmiexec style commands that write their output to \\127.0.0.1\ADMIN$ or C$.
+// False positives: IT teams that use PsExec for administration. Confirm with the account owner;
+//   Impacket output paths are almost never legitimate.
+// Tuning: Exclude your admin jump hosts as a source for the PsExec branch only.
+// Response: Map source to target, reset the credentials used, and isolate both ends if the
+//   activity is not a known admin task.
+// References: https://attack.mitre.org/techniques/T1569/002/
+let Lookback = 7d;
+let RemoteServices = dynamic(["psexesvc.exe", "paexec.exe", "remcomsvc.exe", "csexecsvc.exe"]);
+union
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where FileName in~ (RemoteServices) or InitiatingProcessFileName in~ (RemoteServices)
+        | extend Evidence = "Remote service binary running on the target"),
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where FileName in~ ("psexec.exe", "psexec64.exe") or ProcessVersionInfoOriginalFileName =~ "psexec.c"
+        | extend Evidence = "PsExec launched on the source"),
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where InitiatingProcessFileName in~ ("services.exe", "wmiprvse.exe")
+        | where FileName in~ ("cmd.exe", "powershell.exe")
+        | where ProcessCommandLine matches regex @"(?i)\\\\127\.0\.0\.1\\(ADMIN|C)\$"
+        | extend Evidence = "Impacket-style command with output to an admin share")
+| project Timestamp, DeviceName, DeviceId, Evidence, AccountName, FileName, ProcessCommandLine,
+          InitiatingProcessFileName, InitiatingProcessCommandLine, ReportId
+| order by Timestamp desc

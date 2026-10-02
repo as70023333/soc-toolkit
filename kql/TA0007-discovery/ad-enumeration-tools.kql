@@ -1,0 +1,31 @@
+// Title: Active Directory enumeration tools (AdFind, SharpHound, PowerView)
+// Id: KQL-TA0007-002
+// Tactic: TA0007 Discovery
+// Techniques: T1087.002, T1069.002, T1482
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Execution of AD mapping tools favoured by ransomware crews (AdFind, SharpHound /
+//   BloodHound collectors, ADRecon, PowerView functions) including renamed copies, found by
+//   original file name and by their characteristic arguments (objectcategory= filters,
+//   CollectionMethod switches).
+// False positives: Your own AD security assessments (PingCastle, BloodHound run by the security
+//   team) and admins using Sysinternals AD Explorer. These should be scheduled and announced.
+// Tuning: Exclude the accounts and hosts your security team uses for assessments.
+// Response: If not an announced assessment, isolate the device: AD mapping usually precedes
+//   lateral movement and domain-wide ransomware deployment within hours.
+// References: https://attack.mitre.org/software/S0552/
+let Lookback = 7d;
+let Tools = dynamic(["adfind.exe", "sharphound.exe", "bloodhound.exe", "adexplorer.exe", "adexplorer64.exe",
+    "adrecon.exe", "pingcastle.exe"]);
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where FileName in~ (Tools)
+    or ProcessVersionInfoOriginalFileName in~ (Tools)
+    or ProcessCommandLine has_any ("Invoke-BloodHound", "Get-DomainUser", "Get-NetUser", "Get-DomainComputer",
+                                   "Get-DomainGroupMember", "Invoke-ShareFinder", "PowerView", "ADRecon")
+    or ProcessCommandLine matches regex @"(?i)(objectcategory=|\s--?collectionmethods?\s)"
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessVersionInfoOriginalFileName,
+          ProcessCommandLine, InitiatingProcessFileName, SHA256, ReportId
+| order by Timestamp desc

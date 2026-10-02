@@ -1,0 +1,28 @@
+// Title: Member added to a sensitive Active Directory group
+// Id: KQL-TA0004-002
+// Tactic: TA0004 Privilege Escalation
+// Techniques: T1098.007
+// Platform: Sentinel
+// Tables: SecurityEvent
+// Severity: High
+// Lookback: 7d
+// Description: Windows security events 4728, 4732 and 4756 (member added to a global, local or
+//   universal security group) for the groups that control the domain: Domain Admins, Enterprise
+//   Admins, Schema Admins, Administrators, operators groups, DnsAdmins and others.
+// False positives: Approved changes by the identity team. The local Administrators group fires on
+//   member servers too if you collect their security logs; filter Computer to domain controllers.
+// Tuning: Restrict Computer to your domain controllers; add custom tier-0 groups to SensitiveGroups.
+// Response: Confirm with the actor (SubjectUserName). If unexpected, remove the member, reset the
+//   actor's credentials and check the DC for other changes in the same session.
+// References: https://learn.microsoft.com/windows/security/threat-protection/auditing/event-4728
+let Lookback = 7d;
+let SensitiveGroups = dynamic(["Domain Admins", "Enterprise Admins", "Schema Admins", "Administrators",
+    "Account Operators", "Backup Operators", "Server Operators", "Print Operators", "DnsAdmins",
+    "Group Policy Creator Owners", "Enterprise Key Admins", "Key Admins", "Cert Publishers"]);
+SecurityEvent
+| where TimeGenerated > ago(Lookback)
+| where EventID in (4728, 4732, 4756)
+| where TargetUserName in~ (SensitiveGroups)
+| project TimeGenerated, Computer, Activity, GroupName = TargetUserName, GroupDomain = TargetDomainName,
+          MemberName, MemberSid, Actor = SubjectUserName, ActorDomain = SubjectDomainName
+| order by TimeGenerated desc

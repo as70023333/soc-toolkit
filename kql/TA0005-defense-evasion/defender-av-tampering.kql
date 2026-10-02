@@ -1,0 +1,35 @@
+// Title: Microsoft Defender Antivirus tampering
+// Id: KQL-TA0005-001
+// Tactic: TA0005 Defense Evasion
+// Techniques: T1562.001
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Commands that switch off Defender protections or carve out exclusions: Set- or
+//   Add-MpPreference with Disable* switches or Exclusion*, MpCmdRun -RemoveDefinitions, stopping
+//   or deleting the Defender services, and registry policy writes that disable the antivirus.
+//   Ransomware operators do this minutes before encrypting.
+// False positives: Administrators adding exclusions for line-of-business software or build
+//   servers. Exclusions should come from Intune or GPO, not from a command line.
+// Tuning: With tamper protection on, most of these fail; keep the query to see the attempts.
+// Response: Treat as hands-on-keyboard activity: isolate the device, remove the exclusion and look
+//   for what was dropped into the excluded path.
+// References: https://learn.microsoft.com/defender-endpoint/prevent-changes-to-security-settings-with-tamper-protection
+let Lookback = 7d;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where (FileName in~ ("powershell.exe", "pwsh.exe")
+        and ProcessCommandLine has_any ("Set-MpPreference", "Add-MpPreference")
+        and ProcessCommandLine has_any ("DisableRealtimeMonitoring", "DisableBehaviorMonitoring", "DisableIOAVProtection",
+            "DisableScriptScanning", "DisableBlockAtFirstSeen", "DisableArchiveScanning", "ExclusionPath",
+            "ExclusionProcess", "ExclusionExtension", "ExclusionIpAddress"))
+    or (FileName =~ "MpCmdRun.exe" and ProcessCommandLine has "RemoveDefinitions")
+    or (FileName in~ ("sc.exe", "net.exe", "net1.exe")
+        and ProcessCommandLine has_any ("WinDefend", "Sense", "WdNisSvc", "WdFilter", "WdBoot")
+        and ProcessCommandLine has_any ("stop", "delete", "config"))
+    or (FileName =~ "reg.exe" and ProcessCommandLine has "Windows Defender"
+        and ProcessCommandLine has_any ("DisableAntiSpyware", "DisableAntiVirus", "DisableRealtimeMonitoring"))
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName,
+          InitiatingProcessCommandLine, ReportId
+| order by Timestamp desc

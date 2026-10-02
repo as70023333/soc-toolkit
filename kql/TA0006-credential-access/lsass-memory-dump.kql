@@ -1,0 +1,29 @@
+// Title: LSASS memory dumping
+// Id: KQL-TA0006-003
+// Tactic: TA0006 Credential Access
+// Techniques: T1003.001
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Known ways of dumping LSASS process memory to steal credentials: rundll32 with
+//   comsvcs.dll MiniDump, ProcDump against lsass, Mimikatz commands, and other dump tools named on
+//   the command line. A dump of LSASS gives the attacker every credential cached on the machine.
+// False positives: Support engineers collecting a crash dump of LSASS at Microsoft's request.
+//   That is rare and planned.
+// Tuning: None usually needed. Turn on the ASR rule "Block credential stealing from LSASS" and
+//   Credential Guard to prevent it.
+// Response: Isolate the device, reset every account that signed in to it (including service and
+//   admin accounts), and look for lateral movement from it.
+// References: https://attack.mitre.org/techniques/T1003/001/
+let Lookback = 7d;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where (FileName =~ "rundll32.exe" and ProcessCommandLine matches regex @"(?i)comsvcs(\.dll)?[,\s]+(MiniDump|#\s*24)")
+    or (FileName in~ ("procdump.exe", "procdump64.exe") and ProcessCommandLine has "lsass")
+    or (ProcessVersionInfoOriginalFileName =~ "procdump" and ProcessCommandLine has "lsass")
+    or ProcessCommandLine has_any ("sekurlsa", "lsadump", "mimikatz", "nanodump", "pypykatz", "dumpert")
+    or (ProcessCommandLine has "lsass" and ProcessCommandLine has_any ("minidump", "createdump", "Out-Minidump"))
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName,
+          InitiatingProcessCommandLine, SHA256, ReportId
+| order by Timestamp desc

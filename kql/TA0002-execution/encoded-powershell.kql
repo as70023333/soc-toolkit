@@ -1,0 +1,31 @@
+// Title: Encoded or download-cradle PowerShell
+// Id: KQL-TA0002-002
+// Tactic: TA0002 Execution
+// Techniques: T1059.001, T1027.010, T1105
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: Medium
+// Lookback: 1d
+// Description: PowerShell started with an -EncodedCommand payload (any abbreviation: -e, -enc,
+//   -ec ...) or with in-memory download-and-run patterns (DownloadString, IEX, FromBase64String).
+//   Attackers encode commands to hide them from people reading logs.
+// False positives: Management agents (SCCM/ConfigMgr, Intune scripts, monitoring agents) that pass
+//   encoded commands. Their parent process and command lines are stable across many devices.
+// Tuning: Exclude known parents (CcmExec.exe, IntuneManagementExtension.exe, your RMM agent) after
+//   checking a week of results. Decode the EncodedBlob column to read the payload: it is UTF-16LE
+//   Base64.
+// Response: Decode the payload. If it downloads or runs code, isolate the device and hunt for the
+//   same command line across the fleet.
+// References: https://attack.mitre.org/techniques/T1059/001/
+let Lookback = 1d;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where FileName in~ ("powershell.exe", "pwsh.exe", "powershell_ise.exe")
+| extend EncodedBlob = extract(@"(?i)\s-e[ncodema]*\s+([A-Za-z0-9+/=]{20,})", 1, ProcessCommandLine)
+| where isnotempty(EncodedBlob)
+    or ProcessCommandLine has_any ("FromBase64String", "DownloadString", "DownloadData", "DownloadFile",
+                                   "Invoke-Expression", "Net.WebClient", "Start-BitsTransfer")
+    or ProcessCommandLine matches regex @"(?i)\biex\b"
+| project Timestamp, DeviceName, DeviceId, AccountName, InitiatingProcessFileName, InitiatingProcessCommandLine,
+          ProcessCommandLine, EncodedBlob, ReportId
+| order by Timestamp desc

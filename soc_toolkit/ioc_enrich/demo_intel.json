@@ -1,0 +1,314 @@
+{
+  "note": "Fictional data for the offline demo.",
+  "providers": {
+    "virustotal": {
+      "types": [
+        "ipv4",
+        "ipv6",
+        "domain",
+        "url",
+        "md5",
+        "sha1",
+        "sha256"
+      ],
+      "results": {
+        "5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 100,
+          "summary": "58/72 engines malicious (ransomware.lockbit/encoder)",
+          "tags": [
+            "ransomware.lockbit/encoder"
+          ],
+          "link": "https://www.virustotal.com/gui/file/5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d",
+          "details": {
+            "malicious": 58,
+            "engines": 72,
+            "first_seen": "2026-09-28"
+          }
+        },
+        "7e1f3c9a2b4d6e8f0a1c3e5b7d9f1a3c": {
+          "status": "hit",
+          "verdict": "suspicious",
+          "score": 60,
+          "summary": "2/70 engines malicious (downloader.smokeloader)",
+          "link": "https://www.virustotal.com/gui/file/7e1f3c9a2b4d6e8f0a1c3e5b7d9f1a3c"
+        },
+        "203.0.113.66": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 82,
+          "summary": "6/94 engines malicious",
+          "link": "https://www.virustotal.com/gui/ip-address/203.0.113.66"
+        },
+        "https://update-check.contoso-cdn.net/api/v2/beacon": {
+          "status": "hit",
+          "verdict": "suspicious",
+          "score": 50,
+          "summary": "1/96 engines malicious"
+        },
+        "http://198.51.100.23/files/inv.zip": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 88,
+          "summary": "9/96 engines malicious (malware)"
+        },
+        "micros0ft-support.com": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 88,
+          "summary": "9/94 engines malicious (phishing)",
+          "link": "https://www.virustotal.com/gui/domain/micros0ft-support.com"
+        },
+        "https://micros0ft-support.com/login/verify": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 76,
+          "summary": "3/96 engines malicious (phishing)"
+        },
+        "198.51.100.200": {
+          "status": "clean",
+          "verdict": "harmless",
+          "score": 0,
+          "summary": "0/94 engines malicious"
+        },
+        "3c1e5a7b9d2f4e6a8c0b1d3f5a7c9e1b2d4f6a8c": {
+          "status": "clean",
+          "verdict": "harmless",
+          "score": 0,
+          "summary": "0/72 engines malicious (signed by Contoso IT)"
+        }
+      }
+    },
+    "abuseipdb": {
+      "types": [
+        "ipv4",
+        "ipv6"
+      ],
+      "results": {
+        "203.0.113.66": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 100,
+          "summary": "confidence 100%, 412 report(s) in 90 days",
+          "tags": [
+            "Data Center/Web Hosting/Transit"
+          ],
+          "link": "https://www.abuseipdb.com/check/203.0.113.66"
+        },
+        "192.0.2.10": {
+          "status": "hit",
+          "verdict": "suspicious",
+          "score": 62,
+          "summary": "confidence 62%, 148 report(s) in 90 days",
+          "link": "https://www.abuseipdb.com/check/192.0.2.10"
+        },
+        "198.51.100.200": {
+          "status": "clean",
+          "verdict": "unknown",
+          "score": null,
+          "summary": "no abuse reports"
+        }
+      }
+    },
+    "otx": {
+      "types": [
+        "ipv4",
+        "ipv6",
+        "domain",
+        "url",
+        "md5",
+        "sha1",
+        "sha256"
+      ],
+      "results": {
+        "micros0ft-support.com": {
+          "status": "hit",
+          "verdict": "suspicious",
+          "score": 55,
+          "summary": "in 7 pulse(s); families: credential phishing kit",
+          "tags": [
+            "credential phishing kit"
+          ]
+        },
+        "203.0.113.66": {
+          "status": "hit",
+          "verdict": "suspicious",
+          "score": 55,
+          "summary": "in 12 pulse(s); families: LockBit",
+          "tags": [
+            "LockBit"
+          ]
+        }
+      }
+    },
+    "greynoise": {
+      "types": [
+        "ipv4"
+      ],
+      "results": {
+        "192.0.2.10": {
+          "status": "hit",
+          "verdict": "suspicious",
+          "score": 35,
+          "summary": "opportunistic internet scanner",
+          "link": "https://viz.greynoise.io/ip/192.0.2.10"
+        },
+        "198.51.100.200": {
+          "status": "clean",
+          "verdict": "harmless",
+          "score": 0,
+          "summary": "known business service (Example CDN)",
+          "tags": [
+            "Example CDN",
+            "riot"
+          ],
+          "details": {
+            "benign_service": true
+          }
+        }
+      }
+    },
+    "malwarebazaar": {
+      "types": [
+        "md5",
+        "sha1",
+        "sha256"
+      ],
+      "results": {
+        "5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 95,
+          "summary": "known malware sample (LockBit)",
+          "tags": [
+            "LockBit",
+            "exe"
+          ],
+          "link": "https://bazaar.abuse.ch/sample/5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d/"
+        }
+      }
+    },
+    "urlhaus": {
+      "types": [
+        "url",
+        "domain",
+        "ipv4",
+        "md5",
+        "sha256"
+      ],
+      "results": {
+        "http://198.51.100.23/files/inv.zip": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 95,
+          "summary": "malware distribution URL (online)",
+          "tags": [
+            "malware_download",
+            "SmokeLoader"
+          ]
+        },
+        "7e1f3c9a2b4d6e8f0a1c3e5b7d9f1a3c": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 90,
+          "summary": "payload distributed by malware URLs (SmokeLoader)",
+          "tags": [
+            "SmokeLoader"
+          ]
+        }
+      }
+    },
+    "threatfox": {
+      "types": [
+        "ipv4",
+        "domain",
+        "url",
+        "md5",
+        "sha256"
+      ],
+      "results": {
+        "203.0.113.66": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 95,
+          "summary": "botnet_cc for LockBit",
+          "tags": [
+            "LockBit"
+          ]
+        },
+        "https://update-check.contoso-cdn.net/api/v2/beacon": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 80,
+          "summary": "botnet_cc for LockBit",
+          "tags": [
+            "LockBit"
+          ]
+        },
+        "5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 90,
+          "summary": "payload for LockBit",
+          "tags": [
+            "LockBit"
+          ]
+        }
+      }
+    },
+    "sentinel_ti": {
+      "types": [
+        "ipv4",
+        "ipv6",
+        "domain",
+        "url",
+        "md5",
+        "sha1",
+        "sha256"
+      ],
+      "results": {
+        "micros0ft-support.com": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 90,
+          "summary": "1 active indicator(s) from Microsoft Defender Threat Intelligence: credential phishing kit"
+        },
+        "203.0.113.66": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 85,
+          "summary": "2 active indicator(s) from Microsoft Defender Threat Intelligence, MISP: LockBit C2"
+        }
+      }
+    },
+    "defender_indicators": {
+      "types": [
+        "ipv4",
+        "ipv6",
+        "domain",
+        "url",
+        "md5",
+        "sha1",
+        "sha256"
+      ],
+      "results": {
+        "5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d": {
+          "status": "hit",
+          "verdict": "malicious",
+          "score": 80,
+          "summary": "already in your Defender indicators: AlertAndBlock (added by soc-agent)"
+        },
+        "3c1e5a7b9d2f4e6a8c0b1d3f5a7c9e1b2d4f6a8c": {
+          "status": "clean",
+          "verdict": "harmless",
+          "score": 0,
+          "summary": "already in your Defender indicators: Allowed (your organization trusts it)",
+          "details": {
+            "benign_service": true
+          }
+        }
+      }
+    }
+  }
+}

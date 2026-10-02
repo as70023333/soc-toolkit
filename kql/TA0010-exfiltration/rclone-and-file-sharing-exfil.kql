@@ -1,0 +1,38 @@
+// Title: Rclone, MEGA or file-sharing service used to move data out
+// Id: KQL-TA0010-001
+// Tactic: TA0010 Exfiltration
+// Techniques: T1567.002, T1048
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents, DeviceNetworkEvents
+// Severity: High
+// Lookback: 7d
+// Description: Rclone (often renamed) and MEGA clients copying data, rclone-style command lines
+//   (copy/sync to a remote with --transfers and similar switches), and connections to anonymous
+//   file-sharing services. Double-extortion ransomware groups use these to steal data before
+//   encrypting it.
+// False positives: Engineers using rclone for legitimate cloud backups; users of MEGA for personal
+//   files on corporate devices.
+// Tuning: Exclude sanctioned backup hosts; alert on servers and file servers first.
+// Response: Identify what was copied (command line paths), block the destination, isolate the
+//   device and start breach assessment for the data involved.
+// References: https://attack.mitre.org/techniques/T1567/002/
+let Lookback = 7d;
+let ShareDomains = dynamic(["mega.nz", "mega.co.nz", "mega.io", "transfer.sh", "gofile.io", "file.io", "temp.sh",
+    "anonfiles.com", "bashupload.com", "oshi.at"]);
+union
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where FileName in~ ("rclone.exe", "megasync.exe", "megacmd.exe", "megaclient.exe")
+            or ProcessVersionInfoOriginalFileName =~ "rclone.exe"
+            or ProcessVersionInfoProductName =~ "rclone"
+            or (ProcessCommandLine matches regex @"(?i)\s(copy|sync|move|copyto)\s+\S+\s+\S+:"
+                and ProcessCommandLine has_any ("--transfers", "--ignore-existing", "--auto-confirm", "--multi-thread-streams",
+                                                "--max-age", "--no-check-certificate"))
+        | extend Evidence = "Exfiltration tool executed", Destination = ""),
+    (DeviceNetworkEvents
+        | where Timestamp > ago(Lookback)
+        | where RemoteUrl has_any (ShareDomains)
+        | extend Evidence = "Connection to a file-sharing service", Destination = RemoteUrl)
+| project Timestamp, DeviceName, DeviceId, Evidence, FileName, ProcessCommandLine, Destination, RemoteIP,
+          InitiatingProcessFileName, InitiatingProcessAccountName, ReportId
+| order by Timestamp desc

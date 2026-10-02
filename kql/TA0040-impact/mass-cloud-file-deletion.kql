@@ -1,0 +1,27 @@
+// Title: Mass file deletion in SharePoint or OneDrive
+// Id: KQL-TA0040-003
+// Tactic: TA0040 Impact
+// Techniques: T1485
+// Platform: Sentinel
+// Tables: OfficeActivity
+// Severity: Medium
+// Lookback: 1d
+// Description: One user deleting or recycling 200 or more distinct files within an hour in
+//   SharePoint Online or OneDrive. Destruction by an angry insider, a compromised account, or a
+//   ransomware sync client deleting originals after uploading encrypted copies.
+// False positives: Planned clean-ups of old sites and users tidying their OneDrive.
+// Tuning: Raise MinFiles for large organizations; review accompanying FileUploaded volume to spot
+//   the encrypt-and-replace pattern.
+// Response: Restore from the recycle bin (93 days) or with OneDrive Restore, revoke the user's
+//   sessions if unexpected, and check the device that synced the changes.
+// References: https://attack.mitre.org/techniques/T1485/
+let Lookback = 1d;
+let MinFiles = 200;
+OfficeActivity
+| where TimeGenerated > ago(Lookback)
+| where Operation in ("FileDeleted", "FileDeletedFirstStageRecycleBin", "FileDeletedSecondStageRecycleBin", "FileRecycled")
+| summarize Files = dcount(OfficeObjectId), Sites = make_set(Site_Url, 10), IPs = make_set(ClientIP, 10),
+            FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
+            by UserId, bin(TimeGenerated, 1h)
+| where Files >= MinFiles
+| order by Files desc

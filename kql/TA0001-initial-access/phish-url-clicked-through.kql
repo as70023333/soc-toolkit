@@ -1,0 +1,35 @@
+// Title: User clicked through to a URL from a phishing or malware email
+// Id: KQL-TA0001-001
+// Tactic: TA0001 Initial Access
+// Techniques: T1566.002, T1204.001
+// Platform: Defender XDR
+// Tables: EmailEvents, UrlClickEvents
+// Severity: High
+// Lookback: 7d
+// Description: Safe Links clicks that were allowed (or clicked through a warning page) on links in
+//   mail that Defender for Office 365 classified as phishing or malware. These are the users who
+//   actually reached the attacker's page, which is where account takeover starts.
+// False positives: Security staff opening reported phish to investigate it; phishing-simulation
+//   mail if your simulation vendor is not configured in Advanced delivery. Verdicts assigned after
+//   delivery (ZAP) are not in EmailEvents.ThreatTypes; see EmailPostDeliveryEvents for those.
+// Tuning: Exclude your SOC analysts' accounts. Add EmailPostDeliveryEvents to cover mail that was
+//   reclassified after delivery.
+// Response: Reset the user's password, revoke sessions, review sign-ins since the click for new
+//   locations or MFA registrations, and purge the message from every mailbox.
+// References: https://learn.microsoft.com/defender-xdr/advanced-hunting-urlclickevents-table
+let Lookback = 7d;
+// One row per message (EmailEvents has one row per recipient).
+let MaliciousMail = EmailEvents
+    | where Timestamp > ago(Lookback)
+    | where ThreatTypes has_any ("Phish", "Malware")
+    | summarize Subject = take_any(Subject), SenderFromAddress = take_any(SenderFromAddress),
+                MailThreatTypes = take_any(ThreatTypes), Recipients = dcount(RecipientEmailAddress)
+                by NetworkMessageId;
+UrlClickEvents
+| where Timestamp > ago(Lookback)
+// Allowed clicks, or clicks through the Safe Links warning page.
+| where ActionType == "ClickAllowed" or IsClickedThrough == true
+| join kind=inner MaliciousMail on NetworkMessageId
+| project Timestamp, AccountUpn, Url, ActionType, IsClickedThrough, IPAddress, Subject, SenderFromAddress,
+          MailThreatTypes, Recipients, NetworkMessageId
+| order by Timestamp desc

@@ -1,0 +1,32 @@
+// Title: Web server process spawning a shell or recon tool (web shell / exploitation)
+// Id: KQL-TA0001-005
+// Tactic: TA0001 Initial Access
+// Techniques: T1190, T1505.003
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: IIS (w3wp.exe), Apache, nginx, Tomcat and other web or app servers starting command
+//   shells, PowerShell or reconnaissance commands. Web applications almost never do this; a web
+//   shell or an exploited vulnerability does (Exchange ProxyShell, Confluence, MOVEit-style bugs).
+// False positives: Applications that legitimately shell out (some CMS plugins, health-check
+//   scripts, deployment hooks). They repeat the same command line; attackers vary it.
+// Tuning: Add an allowlist of known command lines per server after a two-week baseline.
+// Response: Isolate the server, look for recently written .aspx/.jsp/.php files in web roots, and
+//   patch the application before reconnecting it.
+// References: https://attack.mitre.org/techniques/T1505/003/
+let Lookback = 7d;
+let WebServers = dynamic(["w3wp.exe", "httpd.exe", "nginx.exe", "tomcat.exe", "tomcat9.exe", "tomcat10.exe",
+    "php-cgi.exe", "UMWorkerProcess.exe"]);
+let SuspiciousChildren = dynamic(["cmd.exe", "powershell.exe", "pwsh.exe", "whoami.exe", "net.exe", "net1.exe",
+    "certutil.exe", "bitsadmin.exe", "mshta.exe", "rundll32.exe", "regsvr32.exe", "wscript.exe", "cscript.exe",
+    "nltest.exe", "systeminfo.exe", "ipconfig.exe", "query.exe", "tasklist.exe", "curl.exe"]);
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where InitiatingProcessFileName in~ (WebServers)
+    or (InitiatingProcessFileName =~ "java.exe"
+        and InitiatingProcessCommandLine has_any ("tomcat", "catalina", "weblogic", "jboss", "confluence", "jira"))
+| where FileName in~ (SuspiciousChildren)
+| project Timestamp, DeviceName, DeviceId, AccountName, InitiatingProcessFileName, InitiatingProcessCommandLine,
+          FileName, ProcessCommandLine, SHA256, ReportId
+| order by Timestamp desc

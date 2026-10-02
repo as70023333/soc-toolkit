@@ -1,0 +1,614 @@
+{
+  "captured_at": "2026-10-01T12:00:00Z",
+  "machines": [
+    {
+      "id": "0000000000000000000000000000000000000001",
+      "computerDnsName": "wks-fin-001.contoso.local",
+      "osPlatform": "Windows11",
+      "version": "24H2",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.1"
+    },
+    {
+      "id": "0000000000000000000000000000000000000002",
+      "computerDnsName": "wks-fin-017.contoso.local",
+      "osPlatform": "Windows11",
+      "version": "24H2",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.2"
+    },
+    {
+      "id": "0000000000000000000000000000000000000003",
+      "computerDnsName": "wks-hr-004.contoso.local",
+      "osPlatform": "Windows11",
+      "version": "23H2",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.3"
+    },
+    {
+      "id": "0000000000000000000000000000000000000004",
+      "computerDnsName": "wks-dev-022.contoso.local",
+      "osPlatform": "Windows11",
+      "version": "24H2",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.4"
+    },
+    {
+      "id": "0000000000000000000000000000000000000005",
+      "computerDnsName": "srv-sql-prd01.contoso.local",
+      "osPlatform": "WindowsServer2022",
+      "version": "21H2",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "High",
+      "rbacGroupName": "Servers",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.5"
+    },
+    {
+      "id": "0000000000000000000000000000000000000006",
+      "computerDnsName": "srv-web-02.contoso.local",
+      "osPlatform": "WindowsServer2019",
+      "version": "1809",
+      "healthStatus": "ImpairedCommunication",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Servers",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.6"
+    },
+    {
+      "id": "0000000000000000000000000000000000000007",
+      "computerDnsName": "wks-mkt-009.contoso.local",
+      "osPlatform": "Windows10",
+      "version": "22H2",
+      "healthStatus": "Inactive",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-09-10T08:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.7"
+    },
+    {
+      "id": "0000000000000000000000000000000000000008",
+      "computerDnsName": "wks-old-003.contoso.local",
+      "osPlatform": "Windows10",
+      "version": "21H2",
+      "healthStatus": "Inactive",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-05-01T08:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.8"
+    },
+    {
+      "id": "0000000000000000000000000000000000000009",
+      "computerDnsName": "lnx-build-01.contoso.local",
+      "osPlatform": "Linux",
+      "version": "Ubuntu 24.04",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Servers",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.9"
+    },
+    {
+      "id": "000000000000000000000000000000000000000a",
+      "computerDnsName": "mac-design-02.contoso.local",
+      "osPlatform": "macOS",
+      "version": "15.6",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.10"
+    },
+    {
+      "id": "000000000000000000000000000000000000000b",
+      "computerDnsName": "printer-3f.contoso.local",
+      "osPlatform": "Windows10",
+      "version": "",
+      "healthStatus": "Inactive",
+      "onboardingStatus": "CanBeOnboarded",
+      "lastSeen": null,
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.11"
+    },
+    {
+      "id": "000000000000000000000000000000000000000c",
+      "computerDnsName": "iot-cam-lobby",
+      "osPlatform": "Linux",
+      "version": "",
+      "healthStatus": "Inactive",
+      "onboardingStatus": "Unsupported",
+      "lastSeen": null,
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.12"
+    },
+    {
+      "id": "000000000000000000000000000000000000000d",
+      "computerDnsName": "wks-sales-011.contoso.local",
+      "osPlatform": "Windows11",
+      "version": "24H2",
+      "healthStatus": "NoSensorData",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.13"
+    },
+    {
+      "id": "000000000000000000000000000000000000000e",
+      "computerDnsName": "srv-dc01.contoso.local",
+      "osPlatform": "WindowsServer2022",
+      "version": "21H2",
+      "healthStatus": "Active",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-10-01T06:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "High",
+      "rbacGroupName": "Domain Controllers",
+      "machineTags": [],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.14"
+    },
+    {
+      "id": "000000000000000000000000000000000000000f",
+      "computerDnsName": "wks-lab-007.contoso.local",
+      "osPlatform": "Windows11",
+      "version": "24H2",
+      "healthStatus": "Inactive",
+      "onboardingStatus": "Onboarded",
+      "lastSeen": "2026-06-01T00:00:00Z",
+      "firstSeen": "2025-02-01T00:00:00Z",
+      "deviceValue": "Normal",
+      "rbacGroupName": "Workstations",
+      "machineTags": [
+        "Retired"
+      ],
+      "riskScore": "Low",
+      "exposureLevel": "Medium",
+      "lastIpAddress": "10.10.4.15"
+    }
+  ],
+  "config_assessments": [
+    {
+      "DeviceId": "0000000000000000000000000000000000000001",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000001",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000001",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000001",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000001",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000001",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000002",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000002",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000002",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000002",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000002",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000002",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000003",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000003",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000003",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000003",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000003",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000003",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000004",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000004",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000004",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000004",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000004",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000004",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000005",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000005",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000005",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000005",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000005",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000005",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000006",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000006",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000006",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000006",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000006",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000006",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000009",
+      "ConfigurationId": "scid-6090",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "0000000000000000000000000000000000000009",
+      "ConfigurationId": "scid-6095",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000a",
+      "ConfigurationId": "scid-5090",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000a",
+      "ConfigurationId": "scid-5095",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000d",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000d",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000d",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000d",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000d",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000d",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000e",
+      "ConfigurationId": "scid-2010",
+      "IsCompliant": false,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000e",
+      "ConfigurationId": "scid-2012",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000e",
+      "ConfigurationId": "scid-2011",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000e",
+      "ConfigurationId": "scid-96",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000e",
+      "ConfigurationId": "scid-2003",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    },
+    {
+      "DeviceId": "000000000000000000000000000000000000000e",
+      "ConfigurationId": "scid-2016",
+      "IsCompliant": true,
+      "IsApplicable": true,
+      "Timestamp": "2026-10-01T05:00:00Z"
+    }
+  ],
+  "errors": {}
+}

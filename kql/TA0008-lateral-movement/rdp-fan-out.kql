@@ -1,0 +1,28 @@
+// Title: One device opening RDP connections to many internal hosts
+// Id: KQL-TA0008-003
+// Tactic: TA0008 Lateral Movement
+// Techniques: T1021.001
+// Platform: Defender XDR
+// Tables: DeviceNetworkEvents
+// Severity: Medium
+// Lookback: 1d
+// Description: A device connecting (or trying to connect) to TCP 3389 on five or more different
+//   internal addresses in a day. Workstations rarely RDP to many machines; an intruder pivoting or
+//   scanning for RDP does.
+// False positives: Admin jump hosts, vulnerability scanners and IT staff workstations.
+// Tuning: Exclude jump hosts and scanners by DeviceName; lower MinTargets for workstations only by
+//   joining DeviceInfo on DeviceType.
+// Response: Check which accounts were used on the targets (DeviceLogonEvents, LogonType
+//   RemoteInteractive) and whether the source device shows other signs of compromise.
+// References: https://attack.mitre.org/techniques/T1021/001/
+let Lookback = 1d;
+let MinTargets = 5;
+DeviceNetworkEvents
+| where Timestamp > ago(Lookback)
+| where RemotePort == 3389 and ActionType in ("ConnectionSuccess", "ConnectionAttempt")
+| where RemoteIPType == "Private"
+| summarize Targets = dcount(RemoteIP), TargetSample = make_set(RemoteIP, 25), Connections = count(),
+            Processes = make_set(InitiatingProcessFileName, 5), FirstSeen = min(Timestamp), LastSeen = max(Timestamp)
+            by DeviceName, DeviceId, InitiatingProcessAccountName
+| where Targets >= MinTargets
+| order by Targets desc

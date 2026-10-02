@@ -1,0 +1,31 @@
+// Title: Renamed system or attack tool binary (masquerading)
+// Id: KQL-TA0005-003
+// Tactic: TA0005 Defense Evasion
+// Techniques: T1036.003
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: Processes whose embedded original file name (version info) is a well-known
+//   interpreter, LOLBin or admin tool, but which run under a different file name. Renaming
+//   rclone.exe to svchost-update.exe or powershell.exe to a random name evades name-based rules.
+// False positives: Portable app launchers and some installers that rename copies of 7-Zip or
+//   PowerShell. Check the folder and the signer.
+// Tuning: Add internal tools you rename on purpose to an exclusion on FolderPath.
+// Response: Review what the renamed binary did (network, files). Renamed rclone or PsExec almost
+//   always means an intruder.
+// References: https://attack.mitre.org/techniques/T1036/003/
+let Lookback = 7d;
+let WatchedTools = dynamic(["cmd", "powershell", "pwsh", "rundll32", "regsvr32", "mshta", "certutil", "wscript",
+    "cscript", "bitsadmin", "msbuild", "psexec", "procdump", "rclone", "7z", "wmic", "schtasks", "net", "nltest",
+    "adfind"]);
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where isnotempty(ProcessVersionInfoOriginalFileName)
+// Normalise "PowerShell.EXE.MUI" and "pwsh.dll" to "powershell" and "pwsh"; "procdump64" to "procdump".
+| extend OriginalBase = replace_regex(tolower(ProcessVersionInfoOriginalFileName), @"\.(exe|dll|c)(\.mui)?$", "")
+| extend NameBase = replace_regex(replace_regex(tolower(FileName), @"\.exe$", ""), @"64$", "")
+| where OriginalBase in (WatchedTools) and NameBase != OriginalBase
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessVersionInfoOriginalFileName, FolderPath,
+          ProcessCommandLine, SHA256, InitiatingProcessFileName, ReportId
+| order by Timestamp desc

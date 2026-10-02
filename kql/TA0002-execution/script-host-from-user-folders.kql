@@ -1,0 +1,26 @@
+// Title: Script host running a script from Downloads, Temp or a URL
+// Id: KQL-TA0002-003
+// Tactic: TA0002 Execution
+// Techniques: T1059.005, T1059.007, T1218.005
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: wscript, cscript and mshta running scripts from places users download to (Downloads,
+//   Temp, the Outlook attachment cache, the browser cache) or straight from a URL. Typical for
+//   malicious .js, .vbs and .hta attachments and for drive-by downloads.
+// False positives: Login scripts and some installers that unpack .vbs files into Temp. Those come
+//   from known parents (gpscript.exe, msiexec.exe).
+// Tuning: Exclude gpscript.exe and msiexec.exe parents after review; consider making .js and .vbs
+//   open in Notepad by default.
+// Response: Collect the script file, check where it came from (mail, browser), and isolate the
+//   device if the script made network connections.
+// References: https://attack.mitre.org/techniques/T1218/005/
+let Lookback = 7d;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where FileName in~ ("wscript.exe", "cscript.exe", "mshta.exe")
+| where ProcessCommandLine matches regex @"(?i)(\\Downloads\\|\\AppData\\Local\\Temp\\|\\Content\.Outlook\\|\\INetCache\\|https?://|javascript:|vbscript:)"
+| project Timestamp, DeviceName, DeviceId, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine,
+          ReportId
+| order by Timestamp desc

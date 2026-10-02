@@ -1,0 +1,29 @@
+// Title: File upload from the command line (curl, PowerShell, BITS)
+// Id: KQL-TA0010-002
+// Tactic: TA0010 Exfiltration
+// Techniques: T1048.002, T1567
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: curl uploading a file (-T, --upload-file, -F, --data-binary @file), PowerShell
+//   Invoke-WebRequest / Invoke-RestMethod with -InFile or POST/PUT, WebClient.UploadFile, and
+//   bitsadmin /upload. Quiet, built-in ways to push data to an attacker's server.
+// False positives: Developers testing APIs with curl -F; deployment scripts that POST build
+//   artifacts. These come from developer workstations and CI agents.
+// Tuning: Exclude CI agents and developer device groups, or alert only on servers.
+// Response: Check the destination URL and the file named in the command line; block the
+//   destination and investigate the device if the upload was unexpected.
+// References: https://attack.mitre.org/techniques/T1048/
+let Lookback = 7d;
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where (FileName =~ "curl.exe"
+        and ProcessCommandLine matches regex @"(?i)\s(-T|--upload-file|-F|--form|--data-binary\s*@|-d\s*@)")
+    or (FileName in~ ("powershell.exe", "pwsh.exe")
+        and ProcessCommandLine matches regex @"(?i)(Invoke-WebRequest|Invoke-RestMethod|\biwr\b|\birm\b).*(-InFile|-Method\s+(Post|Put))")
+    or (FileName in~ ("powershell.exe", "pwsh.exe") and ProcessCommandLine has_any ("UploadFile", "UploadData", "UploadString"))
+    or (FileName =~ "bitsadmin.exe" and ProcessCommandLine has "/upload")
+| project Timestamp, DeviceName, DeviceId, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName,
+          ReportId
+| order by Timestamp desc

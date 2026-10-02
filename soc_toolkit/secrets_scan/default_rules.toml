@@ -1,0 +1,232 @@
+# Built-in rules for secrets-scan.
+#
+# Rules run in this order and the first rule that claims a piece of text wins, so specific
+# formats come first and generic "looks like a password" rules come last. Organization rules
+# from .secrets-scan.toml run before all of these.
+#
+# Fields:
+#   id, description, regex, severity (critical|high|medium|low)
+#   secret_group  capture group holding the secret (default: 1 if the regex has groups, else 0)
+#   keywords      lowercase strings; the regex only runs on lines containing one (fast pre-filter)
+#   require_any   lowercase strings; at least one must also be on the line
+#   entropy       minimum Shannon entropy (bits per character) of the secret
+#   paths         glob list; the rule only runs on matching files
+#   placeholder_check  false to report even values that look like placeholders
+
+[[rule]]
+id = "private-key"
+description = "Private key (PEM / OpenSSH / PGP)"
+regex = '''-----BEGIN[ A-Z0-9_-]{0,100}PRIVATE KEY(?: BLOCK)?-----'''
+severity = "critical"
+keywords = ["private key"]
+placeholder_check = false
+
+[[rule]]
+id = "aws-access-key-id"
+description = "AWS access key ID"
+regex = '''\b((?:AKIA|ASIA|ABIA|ACCA)[A-Z2-7]{16})\b'''
+severity = "high"
+keywords = ["akia", "asia", "abia", "acca"]
+
+[[rule]]
+id = "aws-secret-access-key"
+description = "AWS secret access key"
+regex = '''(?i)aws_?secret_?(?:access_?)?key["']?\s*[:=]\s*["']?([A-Za-z0-9/+]{40})(?![A-Za-z0-9/+=])'''
+severity = "critical"
+keywords = ["secret"]
+
+[[rule]]
+id = "github-token"
+description = "GitHub token (personal, OAuth, app or refresh)"
+regex = '''\b((?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36,255})\b'''
+severity = "high"
+keywords = ["ghp_", "gho_", "ghu_", "ghs_", "ghr_"]
+
+[[rule]]
+id = "github-fine-grained-token"
+description = "GitHub fine-grained personal access token"
+regex = '''\b(github_pat_[A-Za-z0-9_]{82})\b'''
+severity = "high"
+keywords = ["github_pat_"]
+
+[[rule]]
+id = "gitlab-token"
+description = "GitLab personal access token"
+regex = '''\b(glpat-[A-Za-z0-9_-]{20,})'''
+severity = "high"
+keywords = ["glpat-"]
+
+[[rule]]
+id = "slack-token"
+description = "Slack token"
+regex = '''\b(xox[abpors]-[A-Za-z0-9-]{10,250})'''
+severity = "high"
+keywords = ["xox"]
+
+[[rule]]
+id = "slack-webhook"
+description = "Slack incoming webhook URL"
+regex = '''(https://hooks\.slack\.com/(?:services|workflows|triggers)/[A-Za-z0-9+/_-]{20,})'''
+severity = "high"
+keywords = ["hooks.slack.com"]
+
+[[rule]]
+id = "teams-webhook"
+description = "Microsoft Teams incoming webhook URL"
+regex = '''(https://[a-z0-9-]+\.webhook\.office\.com/webhookb2/[A-Za-z0-9@/_.-]{40,})'''
+severity = "high"
+keywords = ["webhook.office.com"]
+
+[[rule]]
+id = "signed-workflow-url"
+description = "Logic Apps / Power Automate / Teams Workflows trigger URL with a signature (anyone with it can trigger the flow)"
+regex = '''(https://[a-z0-9.-]+\.(?:logic\.azure\.com|azure-apim\.net|api\.powerplatform\.com)(?::\d+)?/[^\s"'<>]*?[?&]sig=[A-Za-z0-9_%-]{20,})'''
+severity = "high"
+keywords = ["sig="]
+
+[[rule]]
+id = "azure-storage-key"
+description = "Azure Storage account key in a connection string"
+regex = '''(?i)AccountKey=([A-Za-z0-9+/]{86}==)'''
+severity = "critical"
+keywords = ["accountkey="]
+
+[[rule]]
+id = "azure-sas-token"
+description = "Azure shared access signature (SAS) token"
+regex = '''(?i)[?&]sig=([A-Za-z0-9%+/]{40,}(?:%3D|=){0,2})'''
+severity = "high"
+keywords = ["sig="]
+require_any = ["sv=", "se="]
+
+[[rule]]
+id = "entra-client-secret"
+description = "Microsoft Entra ID application client secret"
+regex = '''(?<![A-Za-z0-9_~.-])([A-Za-z0-9_~.-]{3}\dQ~[A-Za-z0-9_~.-]{31,34})(?![A-Za-z0-9_~.-])'''
+severity = "critical"
+keywords = ["q~"]
+
+[[rule]]
+id = "anthropic-api-key"
+description = "Anthropic API key"
+regex = '''\b(sk-ant-(?:api|admin)\d{2}-[A-Za-z0-9_-]{80,120})'''
+severity = "high"
+keywords = ["sk-ant-"]
+
+[[rule]]
+id = "openai-api-key"
+description = "OpenAI API key"
+regex = '''\b(sk-(?:proj|svcacct|admin)-[A-Za-z0-9_-]{40,}|sk-[A-Za-z0-9]{20}T3BlbkFJ[A-Za-z0-9]{20})'''
+severity = "high"
+keywords = ["sk-"]
+
+[[rule]]
+id = "google-api-key"
+description = "Google API key"
+regex = '''\b(AIza[0-9A-Za-z_-]{35})(?![0-9A-Za-z_-])'''
+severity = "high"
+keywords = ["aiza"]
+
+[[rule]]
+id = "stripe-live-key"
+description = "Stripe live secret or restricted key"
+regex = '''\b((?:sk|rk)_live_[A-Za-z0-9]{20,99})'''
+severity = "critical"
+keywords = ["_live_"]
+
+[[rule]]
+id = "sendgrid-api-key"
+description = "SendGrid API key"
+regex = '''\b(SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43})(?![A-Za-z0-9_-])'''
+severity = "high"
+keywords = ["sg."]
+
+[[rule]]
+id = "npm-token"
+description = "npm access token"
+regex = '''\b(npm_[A-Za-z0-9]{36})(?![A-Za-z0-9])'''
+severity = "high"
+keywords = ["npm_"]
+
+[[rule]]
+id = "pypi-token"
+description = "PyPI API token"
+regex = '''\b(pypi-AgEIcHlwaS5vcmc[A-Za-z0-9_-]{50,})'''
+severity = "high"
+keywords = ["pypi-ageichlwas5vcmc"]
+
+[[rule]]
+id = "discord-webhook"
+description = "Discord webhook URL"
+regex = '''(https://(?:ptb\.|canary\.)?discord(?:app)?\.com/api/webhooks/\d+/[A-Za-z0-9_-]{60,})'''
+severity = "high"
+keywords = ["discord"]
+
+[[rule]]
+id = "jwt"
+description = "JSON Web Token (may be a live session or API token)"
+regex = '''\b(eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,})'''
+severity = "medium"
+keywords = ["eyj"]
+
+[[rule]]
+id = "url-credentials"
+description = "Password embedded in a URL (scheme://user:password@host)"
+regex = '''(?i)\b[a-z][a-z0-9+.-]{1,20}://[^\s:/@"'<>]{1,64}:([^\s:/@"'<>]{3,128})@[a-z0-9.-]+'''
+severity = "high"
+keywords = ["://"]
+
+[[rule]]
+id = "connection-string-password"
+description = "Password in a database connection string"
+regex = '''(?i)(?:^|[;"'\s])(?:password|pwd)\s*=\s*([^;"'\s]{6,})(?=;|"|'|\s|$)'''
+severity = "high"
+keywords = ["password=", "pwd=", "password =", "pwd ="]
+require_any = ["server=", "data source=", "host=", "uid=", "user id=", "username=", "database="]
+
+[[rule]]
+id = "generic-secret-assignment"
+description = "High-entropy value assigned to a secret-looking name"
+regex = '''(?i)(?:^|[^A-Za-z0-9])[A-Za-z0-9_.-]*?(?:secret|token|passwd|password|api[_-]?key|apikey|access[_-]?key|private[_-]?key|auth[_-]?key)["']?\s*(?::=|=>|=|:)\s*["']([^"'\s]{12,200})["']'''
+severity = "medium"
+keywords = ["secret", "token", "passw", "key"]
+entropy = 3.5
+
+[[rule]]
+id = "env-secret-assignment"
+description = "Unquoted high-entropy secret in an environment or shell file"
+regex = '''(?i)^\s*(?:export\s+|\$env:)?[A-Z0-9_]*(?:SECRET|TOKEN|PASSWORD|PASSWD|API_KEY|APIKEY|ACCESS_KEY|PRIVATE_KEY|AUTH_KEY)[A-Z0-9_]*\s*=\s*([^\s"'#]{12,})'''
+severity = "medium"
+keywords = ["secret", "token", "passw", "key"]
+entropy = 3.5
+paths = [".env", ".env.*", "*.env", "*.sh", "*.bash", "*.zsh", "*.ps1", "*.psm1", "Dockerfile", "*.dockerfile", "*.ini", "*.cfg", "*.conf", "*.properties"]
+
+# --- files that should never be committed -----------------------------------------------
+
+[[file_rule]]
+id = "env-file"
+description = "Environment file (.env) - these hold live credentials"
+globs = [".env", ".env.*", "*.env"]
+not_globs = [".env.example", ".env.sample", ".env.template", ".env.dist", "*.example.env", "*.sample.env"]
+severity = "high"
+
+[[file_rule]]
+id = "private-key-file"
+description = "Private key or certificate store file"
+globs = ["*.key", "*.p12", "*.pfx", "*.jks", "*.keystore", "*.ppk", "id_rsa", "id_dsa", "id_ecdsa", "id_ed25519"]
+not_globs = []
+severity = "high"
+
+[[file_rule]]
+id = "credential-store-file"
+description = "Credential or password store file"
+globs = [".git-credentials", ".netrc", "_netrc", ".pgpass", "*.kdbx", "*.publishsettings", "credentials.csv"]
+not_globs = []
+severity = "high"
+
+[[file_rule]]
+id = "terraform-state"
+description = "Terraform state file (stores resource secrets in clear text)"
+globs = ["*.tfstate", "*.tfstate.backup"]
+not_globs = []
+severity = "high"

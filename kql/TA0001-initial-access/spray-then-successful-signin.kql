@@ -1,0 +1,35 @@
+// Title: Successful sign-in from an IP that was password spraying
+// Id: KQL-TA0001-003
+// Tactic: TA0001 Initial Access
+// Techniques: T1078.004, T1110.003
+// Platform: Sentinel
+// Tables: SigninLogs
+// Severity: High
+// Lookback: 1d
+// Description: IP addresses that failed with "invalid username or password" (50126) for many
+//   different accounts, and then signed in successfully as someone. A spray that worked: the
+//   attacker found a valid password.
+// False positives: Shared egress IPs (corporate proxy, VPN concentrator, large NAT) where many users
+//   mistype passwords and later sign in normally. Check the user agent and the spread of accounts.
+// Tuning: Raise MinUsersTargeted for large NAT ranges; exclude your own egress IPs; add
+//   AADNonInteractiveUserSignInLogs with a union to catch sprays against legacy endpoints.
+// Response: Treat the successful account as compromised: reset the password, revoke sessions,
+//   require MFA re-registration, and block the IP.
+// References: https://learn.microsoft.com/entra/identity/monitoring-health/reference-error-codes
+let Lookback = 1d;
+let MinUsersTargeted = 10;
+// IPs that failed the password check for many distinct accounts.
+let SprayIPs = SigninLogs
+    | where TimeGenerated > ago(Lookback)
+    | where ResultType == "50126"
+    | summarize FailedUsers = dcount(UserPrincipalName), FirstFailure = min(TimeGenerated) by IPAddress
+    | where FailedUsers >= MinUsersTargeted;
+SigninLogs
+| where TimeGenerated > ago(Lookback)
+| where ResultType == "0"
+| join kind=inner SprayIPs on IPAddress
+// Only successes that came after the spray started.
+| where TimeGenerated > FirstFailure
+| project TimeGenerated, UserPrincipalName, IPAddress, FailedUsers, FirstFailure, AppDisplayName,
+          ClientAppUsed, ConditionalAccessStatus, AuthenticationRequirement, Location, UserAgent
+| order by TimeGenerated desc

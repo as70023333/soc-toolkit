@@ -1,0 +1,773 @@
+{
+  "captured_at": "2026-10-01T12:00:00Z",
+  "tenant": {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "displayName": "Contoso (demo)"
+  },
+  "users": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "displayName": "Alice Analyst",
+      "userPrincipalName": "alice@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-09-30T16:02:11.1234567Z",
+        "lastNonInteractiveSignInDateTime": "2026-09-30T16:02:11.1234567Z",
+        "lastSuccessfulSignInDateTime": "2026-09-30T16:02:11.1234567Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "displayName": "Bob Legacy",
+      "userPrincipalName": "bob.legacy@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-03-01T08:15:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-03-01T08:15:00Z",
+        "lastSuccessfulSignInDateTime": "2026-03-01T08:15:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000003",
+      "displayName": "Backup Service",
+      "userPrincipalName": "svc-backup@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2025-11-01T10:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": null,
+        "lastNonInteractiveSignInDateTime": null,
+        "lastSuccessfulSignInDateTime": null
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "displayName": "Carol Admin",
+      "userPrincipalName": "carol.admin@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-09-29T11:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-09-29T11:00:00Z",
+        "lastSuccessfulSignInDateTime": "2026-09-29T11:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "displayName": "Dave Sales",
+      "userPrincipalName": "dave@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-09-28T13:45:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-09-28T13:45:00Z",
+        "lastSuccessfulSignInDateTime": "2026-09-28T13:45:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000006",
+      "displayName": "Break Glass 01",
+      "userPrincipalName": "breakglass01@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-07-01T09:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-07-01T09:00:00Z",
+        "lastSuccessfulSignInDateTime": "2026-07-01T09:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000007",
+      "displayName": "Erin Exchange",
+      "userPrincipalName": "erin.exchange@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": true,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-09-30T07:30:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-09-30T07:30:00Z",
+        "lastSuccessfulSignInDateTime": "2026-09-30T07:30:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000008",
+      "displayName": "Frank Former",
+      "userPrincipalName": "frank.former@contoso.com",
+      "accountEnabled": false,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-02-10T09:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-02-10T09:00:00Z",
+        "lastSuccessfulSignInDateTime": "2026-02-10T09:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000009",
+      "displayName": "Vendor X (Fabrikam)",
+      "userPrincipalName": "vendor_x_fabrikam.com#EXT#@contoso.onmicrosoft.com",
+      "accountEnabled": true,
+      "userType": "Guest",
+      "createdDateTime": "2025-06-01T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2025-12-01T12:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2025-12-01T12:00:00Z",
+        "lastSuccessfulSignInDateTime": "2025-12-01T12:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000010",
+      "displayName": "New Hire (personal)",
+      "userPrincipalName": "newhire_gmail.com#EXT#@contoso.onmicrosoft.com",
+      "accountEnabled": true,
+      "userType": "Guest",
+      "createdDateTime": "2026-07-01T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": "PendingAcceptance",
+      "externalUserStateChangeDateTime": "2026-07-01T09:00:00Z",
+      "signInActivity": {
+        "lastSignInDateTime": null,
+        "lastNonInteractiveSignInDateTime": null,
+        "lastSuccessfulSignInDateTime": null
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000011",
+      "displayName": "Grace SecOps",
+      "userPrincipalName": "grace.secops@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-09-30T18:20:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-09-30T18:20:00Z",
+        "lastSuccessfulSignInDateTime": "2026-09-30T18:20:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000012",
+      "displayName": "Heidi Finance",
+      "userPrincipalName": "heidi@contoso.com",
+      "accountEnabled": true,
+      "userType": "Member",
+      "createdDateTime": "2024-01-15T09:00:00Z",
+      "onPremisesSyncEnabled": null,
+      "externalUserState": null,
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSignInDateTime": "2026-09-30T09:10:00Z",
+        "lastNonInteractiveSignInDateTime": "2026-09-30T09:10:00Z",
+        "lastSuccessfulSignInDateTime": "2026-09-30T09:10:00Z"
+      }
+    }
+  ],
+  "sign_in_activity_available": true,
+  "registration": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "userPrincipalName": "alice@contoso.com",
+      "userDisplayName": "Alice Analyst",
+      "isAdmin": false,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "microsoftAuthenticatorPush",
+        "softwareOneTimePasscode"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "userPrincipalName": "bob.legacy@contoso.com",
+      "userDisplayName": "Bob Legacy",
+      "isAdmin": false,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "mobilePhone"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000003",
+      "userPrincipalName": "svc-backup@contoso.com",
+      "userDisplayName": "Backup Service",
+      "isAdmin": false,
+      "isMfaRegistered": false,
+      "isMfaCapable": false,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "userPrincipalName": "carol.admin@contoso.com",
+      "userDisplayName": "Carol Admin",
+      "isAdmin": true,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "microsoftAuthenticatorPush"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "userPrincipalName": "dave@contoso.com",
+      "userDisplayName": "Dave Sales",
+      "isAdmin": false,
+      "isMfaRegistered": false,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "email"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000006",
+      "userPrincipalName": "breakglass01@contoso.com",
+      "userDisplayName": "Break Glass 01",
+      "isAdmin": true,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "fido2SecurityKey"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000007",
+      "userPrincipalName": "erin.exchange@contoso.com",
+      "userDisplayName": "Erin Exchange",
+      "isAdmin": true,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "microsoftAuthenticatorPush",
+        "mobilePhone"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000009",
+      "userPrincipalName": "vendor_x_fabrikam.com#EXT#@contoso.onmicrosoft.com",
+      "userDisplayName": "Vendor X (Fabrikam)",
+      "isAdmin": true,
+      "isMfaRegistered": false,
+      "isMfaCapable": false,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [],
+      "userType": "guest",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000011",
+      "userPrincipalName": "grace.secops@contoso.com",
+      "userDisplayName": "Grace SecOps",
+      "isAdmin": true,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "passKeyDeviceBoundAuthenticator",
+        "microsoftAuthenticatorPush"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000012",
+      "userPrincipalName": "heidi@contoso.com",
+      "userDisplayName": "Heidi Finance",
+      "isAdmin": false,
+      "isMfaRegistered": true,
+      "isMfaCapable": true,
+      "isPasswordlessCapable": false,
+      "isSsprRegistered": false,
+      "methodsRegistered": [
+        "fido2SecurityKey",
+        "microsoftAuthenticatorPush"
+      ],
+      "userType": "member",
+      "lastUpdatedDateTime": "2026-09-30T00:00:00Z"
+    }
+  ],
+  "service_principals": [
+    {
+      "id": "sp-graph",
+      "appId": "00000003-0000-0000-c000-000000000000",
+      "displayName": "Microsoft Graph",
+      "appOwnerOrganizationId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a",
+      "publisherName": "Microsoft Services",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Microsoft Services",
+        "verifiedPublisherId": "1234567",
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-exo",
+      "appId": "00000002-0000-0ff1-ce00-000000000000",
+      "displayName": "Office 365 Exchange Online",
+      "appOwnerOrganizationId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a",
+      "publisherName": "Microsoft Services",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Microsoft Services",
+        "verifiedPublisherId": "1234567",
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-teams",
+      "appId": "1fec8e78-bce4-4aaf-ab1b-5451cc387264",
+      "displayName": "Microsoft Teams",
+      "appOwnerOrganizationId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a",
+      "publisherName": "Microsoft Services",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Microsoft Services",
+        "verifiedPublisherId": "1234567",
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-mailsync",
+      "appId": "aaaaaaaa-1111-4111-8111-000000000001",
+      "displayName": "MailSync Pro",
+      "appOwnerOrganizationId": "9a9a9a9a-0000-4000-8000-000000000001",
+      "publisherName": "MailSync Ltd",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "MailSync Ltd",
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-hrportal",
+      "appId": "aaaaaaaa-1111-4111-8111-000000000002",
+      "displayName": "HR Portal",
+      "appOwnerOrganizationId": "11111111-1111-4111-8111-111111111111",
+      "publisherName": "Contoso",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Contoso",
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-automation",
+      "appId": "aaaaaaaa-1111-4111-8111-000000000003",
+      "displayName": "Contoso Automation",
+      "appOwnerOrganizationId": "11111111-1111-4111-8111-111111111111",
+      "publisherName": "Contoso",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Contoso",
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-pdf",
+      "appId": "aaaaaaaa-1111-4111-8111-000000000004",
+      "displayName": "PDF Converter Online",
+      "appOwnerOrganizationId": "9a9a9a9a-0000-4000-8000-000000000002",
+      "publisherName": "PDFTools Inc",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "PDFTools Inc",
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-calendar",
+      "appId": "aaaaaaaa-1111-4111-8111-000000000005",
+      "displayName": "Calendar Helper",
+      "appOwnerOrganizationId": "9a9a9a9a-0000-4000-8000-000000000003",
+      "publisherName": "Calendly-ish Corp",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Calendly-ish Corp",
+        "verifiedPublisherId": "1234567",
+        "addedDateTime": null
+      }
+    },
+    {
+      "id": "sp-backupconn",
+      "appId": "aaaaaaaa-1111-4111-8111-000000000006",
+      "displayName": "Legacy Backup Connector",
+      "appOwnerOrganizationId": "11111111-1111-4111-8111-111111111111",
+      "publisherName": "Contoso",
+      "servicePrincipalType": "Application",
+      "accountEnabled": true,
+      "createdDateTime": "2025-03-01T00:00:00Z",
+      "verifiedPublisher": {
+        "displayName": "Contoso",
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      }
+    }
+  ],
+  "oauth2_grants": [
+    {
+      "id": "grant-1",
+      "clientId": "sp-pdf",
+      "consentType": "Principal",
+      "principalId": "00000000-0000-4000-8000-000000000002",
+      "resourceId": "sp-graph",
+      "scope": "openid offline_access Mail.ReadWrite Files.ReadWrite.All"
+    },
+    {
+      "id": "grant-2",
+      "clientId": "sp-pdf",
+      "consentType": "Principal",
+      "principalId": "00000000-0000-4000-8000-000000000005",
+      "resourceId": "sp-graph",
+      "scope": "openid offline_access Mail.ReadWrite Files.ReadWrite.All"
+    },
+    {
+      "id": "grant-3",
+      "clientId": "sp-pdf",
+      "consentType": "Principal",
+      "principalId": "00000000-0000-4000-8000-000000000012",
+      "resourceId": "sp-graph",
+      "scope": "openid offline_access Mail.ReadWrite Files.ReadWrite.All"
+    },
+    {
+      "id": "grant-4",
+      "clientId": "sp-calendar",
+      "consentType": "AllPrincipals",
+      "principalId": null,
+      "resourceId": "sp-graph",
+      "scope": "User.Read Calendars.Read"
+    },
+    {
+      "id": "grant-5",
+      "clientId": "sp-teams",
+      "consentType": "AllPrincipals",
+      "principalId": null,
+      "resourceId": "sp-graph",
+      "scope": "Directory.AccessAsUser.All"
+    }
+  ],
+  "app_role_assignments": [
+    {
+      "id": "ara-1",
+      "principalId": "sp-mailsync",
+      "principalType": "ServicePrincipal",
+      "resourceId": "sp-graph",
+      "appRoleId": "810c84a8-4a9e-49e6-bf7d-12d183f40d01",
+      "createdDateTime": "2025-05-01T00:00:00Z"
+    },
+    {
+      "id": "ara-2",
+      "principalId": "sp-mailsync",
+      "principalType": "ServicePrincipal",
+      "resourceId": "sp-exo",
+      "appRoleId": "dc890d15-9560-4a4c-9b7f-a736ec74ec40",
+      "createdDateTime": "2025-05-01T00:00:00Z"
+    },
+    {
+      "id": "ara-3",
+      "principalId": "sp-hrportal",
+      "principalType": "ServicePrincipal",
+      "resourceId": "sp-graph",
+      "appRoleId": "df021288-bdef-4463-88db-98f22de89214",
+      "createdDateTime": "2025-05-01T00:00:00Z"
+    },
+    {
+      "id": "ara-4",
+      "principalId": "sp-hrportal",
+      "principalType": "ServicePrincipal",
+      "resourceId": "sp-graph",
+      "appRoleId": "7ab1d382-f21e-4acd-a863-ba3e13f7da61",
+      "createdDateTime": "2025-05-01T00:00:00Z"
+    },
+    {
+      "id": "ara-5",
+      "principalId": "sp-automation",
+      "principalType": "ServicePrincipal",
+      "resourceId": "sp-graph",
+      "appRoleId": "9e3f62cf-ca93-4989-b6ce-bf83c28f9fe8",
+      "createdDateTime": "2025-05-01T00:00:00Z"
+    },
+    {
+      "id": "ara-6",
+      "principalId": "sp-teams",
+      "principalType": "ServicePrincipal",
+      "resourceId": "sp-graph",
+      "appRoleId": "75359482-378d-4052-8f01-80520e7db3cd",
+      "createdDateTime": "2025-05-01T00:00:00Z"
+    }
+  ],
+  "resource_app_roles": {
+    "sp-graph": {
+      "810c84a8-4a9e-49e6-bf7d-12d183f40d01": "Mail.Read",
+      "75359482-378d-4052-8f01-80520e7db3cd": "Files.ReadWrite.All",
+      "9e3f62cf-ca93-4989-b6ce-bf83c28f9fe8": "RoleManagement.ReadWrite.Directory",
+      "df021288-bdef-4463-88db-98f22de89214": "User.Read.All",
+      "7ab1d382-f21e-4acd-a863-ba3e13f7da61": "Directory.Read.All"
+    },
+    "sp-exo": {
+      "dc890d15-9560-4a4c-9b7f-a736ec74ec40": "full_access_as_app"
+    }
+  },
+  "role_definitions": [
+    {
+      "id": "62e90394-69f5-4237-9190-012177145e10",
+      "templateId": "62e90394-69f5-4237-9190-012177145e10",
+      "displayName": "Global Administrator",
+      "isBuiltIn": true,
+      "isPrivileged": true
+    },
+    {
+      "id": "29232cdf-9323-42fd-ade2-1d097af3e4de",
+      "templateId": "29232cdf-9323-42fd-ade2-1d097af3e4de",
+      "displayName": "Exchange Administrator",
+      "isBuiltIn": true,
+      "isPrivileged": true
+    },
+    {
+      "id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+      "templateId": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+      "displayName": "Security Administrator",
+      "isBuiltIn": true,
+      "isPrivileged": true
+    },
+    {
+      "id": "fe930be7-5e62-47db-91af-98c3a49a38b1",
+      "templateId": "fe930be7-5e62-47db-91af-98c3a49a38b1",
+      "displayName": "User Administrator",
+      "isBuiltIn": true,
+      "isPrivileged": true
+    },
+    {
+      "id": "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+      "templateId": "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+      "displayName": "Helpdesk Administrator",
+      "isBuiltIn": true,
+      "isPrivileged": true
+    },
+    {
+      "id": "e8611ab8-c189-46e8-94e1-60213ab1f814",
+      "templateId": "e8611ab8-c189-46e8-94e1-60213ab1f814",
+      "displayName": "Privileged Role Administrator",
+      "isBuiltIn": true,
+      "isPrivileged": true
+    },
+    {
+      "id": "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+      "templateId": "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+      "displayName": "Global Reader",
+      "isBuiltIn": true,
+      "isPrivileged": false
+    }
+  ],
+  "role_assignments": [
+    {
+      "id": "rasi-1",
+      "principalId": "00000000-0000-4000-8000-000000000004",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-2",
+      "principalId": "00000000-0000-4000-8000-000000000006",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-3",
+      "principalId": "00000000-0000-4000-8000-000000000011",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "assignmentType": "Activated",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": "2026-10-01T16:00:00Z",
+      "source": "pim"
+    },
+    {
+      "id": "rasi-4",
+      "principalId": "00000000-0000-4000-8000-000000000007",
+      "roleDefinitionId": "29232cdf-9323-42fd-ade2-1d097af3e4de",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-5",
+      "principalId": "00000000-0000-4000-8000-000000000008",
+      "roleDefinitionId": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-6",
+      "principalId": "00000000-0000-4000-8000-000000000009",
+      "roleDefinitionId": "fe930be7-5e62-47db-91af-98c3a49a38b1",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-7",
+      "principalId": "grp-helpdesk",
+      "roleDefinitionId": "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-8",
+      "principalId": "sp-backupconn",
+      "roleDefinitionId": "e8611ab8-c189-46e8-94e1-60213ab1f814",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-9",
+      "principalId": "00000000-0000-4000-8000-000000000001",
+      "roleDefinitionId": "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+      "directoryScopeId": "/",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    },
+    {
+      "id": "rasi-10",
+      "principalId": "00000000-0000-4000-8000-000000000012",
+      "roleDefinitionId": "fe930be7-5e62-47db-91af-98c3a49a38b1",
+      "directoryScopeId": "/administrativeUnits/au-finance",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "startDateTime": "2025-01-01T00:00:00Z",
+      "endDateTime": null,
+      "source": "pim"
+    }
+  ],
+  "pim_available": true,
+  "principals": {
+    "grp-helpdesk": {
+      "@odata.type": "#microsoft.graph.group",
+      "id": "grp-helpdesk",
+      "displayName": "SG-Helpdesk-Admins"
+    }
+  },
+  "checks": [
+    "stale",
+    "mfa",
+    "consent",
+    "roles"
+  ],
+  "errors": {}
+}

@@ -1,0 +1,37 @@
+// Title: UAC bypass through an auto-elevating binary
+// Id: KQL-TA0004-003
+// Tactic: TA0004 Privilege Escalation
+// Techniques: T1548.002
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents, DeviceRegistryEvents
+// Severity: High
+// Lookback: 7d
+// Description: Two signs of the common UAC bypasses: auto-elevating Windows binaries (fodhelper,
+//   computerdefaults, sdclt, eventvwr...) starting a shell or a program from a user folder, and the
+//   per-user "shell\open\command" registry hijack those bypasses depend on.
+// False positives: Very rare. Some IT tools change ms-settings file associations; check the writer.
+// Tuning: None usually needed. Add more auto-elevating binaries as new bypasses are published.
+// Response: The attacker already runs code as the user and now has admin rights: isolate the device
+//   and investigate how the first stage arrived.
+// References: https://attack.mitre.org/techniques/T1548/002/
+let Lookback = 7d;
+let AutoElevate = dynamic(["fodhelper.exe", "computerdefaults.exe", "sdclt.exe", "eventvwr.exe", "slui.exe",
+    "wsreset.exe", "changepk.exe"]);
+union
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where InitiatingProcessFileName in~ (AutoElevate)
+        | where FileName !in~ (AutoElevate)
+        | where FileName in~ ("cmd.exe", "powershell.exe", "pwsh.exe", "mshta.exe", "rundll32.exe", "regsvr32.exe",
+                              "wscript.exe", "cscript.exe")
+            or FolderPath matches regex @"(?i)\\(Users|ProgramData|Temp)\\"
+        | extend Evidence = "Auto-elevating binary started a shell or user-folder program"),
+    (DeviceRegistryEvents
+        | where Timestamp > ago(Lookback)
+        | where ActionType == "RegistryValueSet"
+        | where RegistryKey startswith "HKEY_CURRENT_USER"
+        | where RegistryKey matches regex @"(?i)\\Classes\\(ms-settings|mscfile|exefile|Folder|Launcher\.SystemSettings)\\shell\\open\\command$"
+        | extend Evidence = "Per-user shell open command hijack")
+| project Timestamp, DeviceName, DeviceId, Evidence, FileName, ProcessCommandLine, RegistryKey, RegistryValueData,
+          InitiatingProcessFileName, InitiatingProcessCommandLine, ReportId
+| order by Timestamp desc

@@ -1,0 +1,46 @@
+// Title: Beaconing to a rare public IP
+// Id: KQL-TA0011-001
+// Tactic: TA0011 Command and Control
+// Techniques: T1071.001, T1573
+// Platform: Defender XDR
+// Tables: DeviceNetworkEvents
+// Severity: Medium
+// Lookback: 1d
+// Description: A process on one device connecting to the same public IP at near-regular intervals
+//   (low jitter) 30 or more times, to a destination that at most three devices in the
+//   organization talk to. Implants check in with their C2 server on a timer; popular services are
+//   filtered out by the prevalence check.
+// False positives: Update checkers, telemetry agents and chat clients that poll a niche endpoint.
+//   The process name and destination usually make these obvious.
+// Tuning: Raise MaxPrevalence in small environments; widen MaxJitter to 0.3 to catch implants with
+//   random sleep; enrich RemoteIP with ioc-enrich.
+// Response: Enrich the IP and URL, look at the process's file hash and parent, and isolate the
+//   device if the destination is unknown or malicious.
+// References: https://attack.mitre.org/techniques/T1071/001/
+let Lookback = 1d;
+let MinConnections = 30;
+let MaxJitter = 0.2;
+let MaxPrevalence = 3;
+let PublicConnections = DeviceNetworkEvents
+    | where Timestamp > ago(Lookback)
+    | where ActionType == "ConnectionSuccess" and RemoteIPType == "Public"
+    | project Timestamp, DeviceId, DeviceName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl;
+// Destinations that only a handful of devices contact.
+let RareDestinations = PublicConnections
+    | summarize Devices = dcount(DeviceId) by RemoteIP
+    | where Devices <= MaxPrevalence
+    | project RemoteIP;
+PublicConnections
+| where RemoteIP in (RareDestinations)
+| sort by DeviceId asc, InitiatingProcessFileName asc, RemoteIP asc, Timestamp asc
+// Seconds since the previous connection from the same device and process to the same IP.
+| extend Delta = iff(DeviceId == prev(DeviceId) and InitiatingProcessFileName == prev(InitiatingProcessFileName)
+                     and RemoteIP == prev(RemoteIP), datetime_diff("second", Timestamp, prev(Timestamp)), long(null))
+| where isnotnull(Delta) and Delta > 0
+| summarize Connections = count(), AvgInterval = avg(Delta), StdInterval = stdev(Delta), FirstSeen = min(Timestamp),
+            LastSeen = max(Timestamp), Urls = make_set(RemoteUrl, 5), Ports = make_set(RemotePort, 5)
+            by DeviceName, DeviceId, InitiatingProcessFileName, RemoteIP
+| where Connections >= MinConnections
+| extend Jitter = round(StdInterval / AvgInterval, 3)
+| where Jitter <= MaxJitter and AvgInterval between (10.0 .. 3600.0)
+| order by Jitter asc

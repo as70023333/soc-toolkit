@@ -1,0 +1,16 @@
+# This repository checks itself with its own secrets scanner.
+# Install once with:  pip install pre-commit && pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: secrets-scan
+        name: secrets-scan (this repository)
+        entry: python -m soc_toolkit.secrets_scan
+        language: system
+        require_serial: true
+      - id: kql-catalog
+        name: kql-catalog lint and check
+        entry: python -m soc_toolkit.kql_catalog lint
+        language: system
+        files: ^kql/
+        pass_filenames: false

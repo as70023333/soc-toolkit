@@ -1,0 +1,32 @@
+// Title: Mass file renaming with a new extension (ransomware encryption)
+// Id: KQL-TA0040-002
+// Tactic: TA0040 Impact
+// Techniques: T1486
+// Platform: Defender XDR
+// Tables: DeviceFileEvents
+// Severity: High
+// Lookback: 1d
+// Description: One process renaming 100 or more files within five minutes where the file extension
+//   changes (report.xlsx to report.xlsx.lockbit). That is what encryption looks like on disk.
+// False positives: Photo and media tools renaming batches of files; build systems; sync clients
+//   resolving conflicts. These keep normal extensions; the new extension in NewExtensions tells
+//   you quickly.
+// Tuning: Lower MinFiles to catch slower encryptors; add the share server names if your file
+//   servers are onboarded.
+// Response: Isolate the device now, disable the account in InitiatingProcessAccountName, and check
+//   file servers for the same extension.
+// References: https://attack.mitre.org/techniques/T1486/
+let Lookback = 1d;
+let Window = 5m;
+let MinFiles = 100;
+DeviceFileEvents
+| where Timestamp > ago(Lookback)
+| where ActionType == "FileRenamed" and isnotempty(PreviousFileName)
+| extend Extension = tolower(extract(@"\.([A-Za-z0-9]{1,12})$", 1, FileName))
+| extend PreviousExtension = tolower(extract(@"\.([A-Za-z0-9]{1,12})$", 1, PreviousFileName))
+| where Extension != PreviousExtension
+| summarize Files = dcount(FolderPath), NewExtensions = make_set(Extension, 5), OldExtensions = make_set(PreviousExtension, 10),
+            SampleFiles = make_set(FolderPath, 10), FirstSeen = min(Timestamp), LastSeen = max(Timestamp)
+            by DeviceName, DeviceId, InitiatingProcessFileName, InitiatingProcessAccountName, bin(Timestamp, Window)
+| where Files >= MinFiles
+| order by Files desc

@@ -1,0 +1,41 @@
+// Title: Tunneling and remote-access tools
+// Id: KQL-TA0011-003
+// Tactic: TA0011 Command and Control
+// Techniques: T1572, T1219, T1090
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents, DeviceNetworkEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: Tunnels (ngrok, Cloudflare Tunnel, chisel, frp, plink, Tor) and remote-access tools
+//   (AnyDesk, ScreenConnect, RustDesk, NetSupport, Atera, Splashtop, TeamViewer) being run or
+//   contacted. Ransomware groups install legitimate remote-access software as a backdoor that
+//   blends in with IT activity.
+// False positives: Remote-access tools your IT department actually uses. Keep an approved list and
+//   alert on everything else.
+// Tuning: Remove your sanctioned tool from Tools and Domains, or exclude the devices it is deployed
+//   to by device tag.
+// Response: Confirm with the user and IT. If unapproved, uninstall it, block its domains, and treat
+//   the device as compromised until the install is explained.
+// References: https://attack.mitre.org/techniques/T1219/
+let Lookback = 7d;
+let Tools = dynamic(["ngrok.exe", "cloudflared.exe", "plink.exe", "chisel.exe", "frpc.exe", "ligolo.exe",
+    "tor.exe", "anydesk.exe", "atera_agent.exe", "screenconnect.windowsclient.exe", "teamviewer.exe",
+    "rustdesk.exe", "splashtop.exe", "client32.exe"]);
+let Domains = dynamic(["ngrok.io", "ngrok-free.app", "ngrok.app", "trycloudflare.com", "serveo.net",
+    "localtonet.com", "loca.lt", "pinggy.io", "anydesk.com", "rustdesk.com", "screenconnect.com",
+    "teamviewer.com", "netsupportsoftware.com"]);
+union
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where FileName in~ (Tools) or ProcessVersionInfoOriginalFileName in~ (Tools)
+        | extend Evidence = "Tool executed", Tool = FileName, Destination = ""),
+    (DeviceNetworkEvents
+        | where Timestamp > ago(Lookback)
+        | where RemoteUrl has_any (Domains)
+        | extend Evidence = "Connection to a tunnel or remote-access service", Tool = InitiatingProcessFileName,
+                 Destination = RemoteUrl)
+| summarize Events = count(), EvidenceTypes = make_set(Evidence), ToolNames = make_set(Tool, 10),
+            Destinations = make_set_if(Destination, isnotempty(Destination), 10),
+            FirstSeen = min(Timestamp), LastSeen = max(Timestamp)
+            by DeviceName, DeviceId
+| order by LastSeen desc

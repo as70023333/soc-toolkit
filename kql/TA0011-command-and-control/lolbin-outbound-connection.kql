@@ -1,0 +1,32 @@
+// Title: LOLBin making outbound internet connections
+// Id: KQL-TA0011-002
+// Tactic: TA0011 Command and Control
+// Techniques: T1218, T1105
+// Platform: Defender XDR
+// Tables: DeviceNetworkEvents
+// Severity: Medium
+// Lookback: 1d
+// Description: Signed Windows binaries that attackers abuse to proxy execution (rundll32,
+//   regsvr32, mshta, certutil, msbuild...) connecting to public addresses. These binaries rarely
+//   need the internet; when they reach it they are usually downloading a payload or talking to C2.
+// False positives: certutil and msiexec contacting Microsoft and certificate authority endpoints
+//   for revocation and updates; some installers using rundll32.
+// Tuning: Extend TrustedDomains with your software update endpoints after review.
+// Response: Look at the command line of the initiating process; block the destination and isolate
+//   the device if it fetched a file.
+// References: https://lolbas-project.github.io/
+let Lookback = 1d;
+let Lolbins = dynamic(["rundll32.exe", "regsvr32.exe", "mshta.exe", "certutil.exe", "bitsadmin.exe", "msbuild.exe",
+    "installutil.exe", "wmic.exe", "cscript.exe", "wscript.exe", "regasm.exe", "regsvcs.exe", "odbcconf.exe",
+    "cmstp.exe", "msiexec.exe", "hh.exe"]);
+let TrustedDomains = dynamic(["microsoft.com", "windowsupdate.com", "msftconnecttest.com", "digicert.com",
+    "verisign.com", "globalsign.com", "sectigo.com", "letsencrypt.org", "lencr.org"]);
+DeviceNetworkEvents
+| where Timestamp > ago(Lookback)
+| where InitiatingProcessFileName in~ (Lolbins)
+| where RemoteIPType == "Public" and ActionType in ("ConnectionSuccess", "ConnectionAttempt")
+| where not(RemoteUrl has_any (TrustedDomains))
+| summarize Connections = count(), FirstSeen = min(Timestamp), LastSeen = max(Timestamp),
+            CommandLines = make_set(InitiatingProcessCommandLine, 5)
+            by DeviceName, DeviceId, InitiatingProcessFileName, RemoteIP, RemoteUrl, RemotePort
+| order by FirstSeen desc

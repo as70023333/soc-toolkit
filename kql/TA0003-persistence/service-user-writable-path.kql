@@ -1,0 +1,30 @@
+// Title: Service installed with a binary in a user-writable path or a script command
+// Id: KQL-TA0003-003
+// Tactic: TA0003 Persistence
+// Techniques: T1543.003, T1569.002
+// Platform: Defender XDR
+// Tables: DeviceRegistryEvents
+// Severity: High
+// Lookback: 7d
+// Description: A Windows service ImagePath set to a binary under Users, AppData, Temp or
+//   ProgramData, or to a cmd / PowerShell / rundll32 command. Services run as SYSTEM, so this is
+//   both persistence and privilege escalation; PsExec-style tools and many loaders do it.
+// False positives: A few vendors install services from ProgramData (Defender itself is excluded
+//   below). Endpoint agents and backup software during upgrades.
+// Tuning: Add vendor paths you trust to the exclusion regex after review.
+// Response: Inspect the binary and the account that created the service; stop and delete the
+//   service if malicious, then isolate the device.
+// References: https://attack.mitre.org/techniques/T1543/003/
+let Lookback = 7d;
+DeviceRegistryEvents
+| where Timestamp > ago(Lookback)
+| where ActionType == "RegistryValueSet"
+| where RegistryKey matches regex @"(?i)\\SYSTEM\\(CurrentControlSet|ControlSet\d{3})\\Services\\[^\\]+$"
+| where RegistryValueName =~ "ImagePath"
+| where RegistryValueData matches regex @"(?i)(\\Users\\|\\AppData\\|\\Temp\\|\\ProgramData\\|\\Windows\\Tasks\\|powershell|pwsh|cmd(\.exe)?\s+/c|%COMSPEC%|rundll32|mshta)"
+// Microsoft Defender updates its own service binaries under ProgramData.
+| where not(RegistryValueData matches regex @"(?i)\\ProgramData\\Microsoft\\Windows Defender( Advanced Threat Protection)?\\")
+| extend ServiceName = extract(@"(?i)\\Services\\([^\\]+)$", 1, RegistryKey)
+| project Timestamp, DeviceName, DeviceId, ServiceName, RegistryValueData, InitiatingProcessFileName,
+          InitiatingProcessCommandLine, InitiatingProcessAccountName, ReportId
+| order by Timestamp desc

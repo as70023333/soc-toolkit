@@ -1,0 +1,31 @@
+// Title: Office application spawning a shell, script host or LOLBin
+// Id: KQL-TA0002-001
+// Tactic: TA0002 Execution
+// Techniques: T1204.002, T1059.001, T1059.003
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents
+// Severity: High
+// Lookback: 7d
+// Description: Word, Excel, PowerPoint, Outlook and other Office apps starting cmd, PowerShell,
+//   script hosts or living-off-the-land binaries. This is what a malicious macro or an exploited
+//   document does in the seconds after the user opens it.
+// False positives: Excel add-ins and macros used by finance teams that call scripts; Outlook
+//   opening a link in a browser is not included. Look for the same command line across many users.
+// Tuning: Turn on the ASR rule "Block all Office applications from creating child processes"
+//   in audit mode and compare; allowlist known add-in command lines.
+// Response: Isolate the device, find the document (InitiatingProcessCommandLine), check the mail
+//   it came in, and block its hash.
+// References: https://learn.microsoft.com/defender-endpoint/attack-surface-reduction-rules-reference
+let Lookback = 7d;
+let OfficeApps = dynamic(["winword.exe", "excel.exe", "powerpnt.exe", "outlook.exe", "msaccess.exe", "mspub.exe",
+    "onenote.exe", "visio.exe"]);
+let Children = dynamic(["cmd.exe", "powershell.exe", "pwsh.exe", "wscript.exe", "cscript.exe", "mshta.exe",
+    "rundll32.exe", "regsvr32.exe", "certutil.exe", "bitsadmin.exe", "msbuild.exe", "installutil.exe",
+    "schtasks.exe", "hh.exe", "curl.exe"]);
+DeviceProcessEvents
+| where Timestamp > ago(Lookback)
+| where InitiatingProcessFileName in~ (OfficeApps)
+| where FileName in~ (Children)
+| project Timestamp, DeviceName, DeviceId, AccountName, InitiatingProcessFileName, InitiatingProcessCommandLine,
+          FileName, ProcessCommandLine, SHA256, ReportId
+| order by Timestamp desc

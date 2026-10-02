@@ -1,0 +1,32 @@
+// Title: Windows event log cleared
+// Id: KQL-TA0005-002
+// Tactic: TA0005 Defense Evasion
+// Techniques: T1070.001
+// Platform: Defender XDR
+// Tables: DeviceProcessEvents, DeviceEvents
+// Severity: High
+// Lookback: 7d
+// Description: Clearing Windows event logs with wevtutil, PowerShell (Clear-EventLog,
+//   Remove-EventLog, Limit-EventLog, EventLogSession.ClearLog) and the Security log cleared event
+//   reported by the sensor. Attackers wipe logs to hide what they did.
+// False positives: Imaging and kiosk-reset scripts; some troubleshooting by IT. Rare on servers.
+// Tuning: Exclude gold-image build machines by DeviceName.
+// Response: Assume compromise of the device: isolate it, pull the timeline from Defender (which
+//   keeps its own copy) and find the account that ran the command.
+// References: https://attack.mitre.org/techniques/T1070/001/
+let Lookback = 7d;
+union
+    (DeviceProcessEvents
+        | where Timestamp > ago(Lookback)
+        | where (FileName =~ "wevtutil.exe" and ProcessCommandLine matches regex @"(?i)\s(cl|clear-log)\s")
+            or (FileName in~ ("powershell.exe", "pwsh.exe")
+                and ProcessCommandLine has_any ("Clear-EventLog", "Remove-EventLog", "Limit-EventLog"))
+            or (ProcessCommandLine has "EventLogSession" and ProcessCommandLine has "ClearLog")
+        | extend Evidence = "Log clearing command"),
+    (DeviceEvents
+        | where Timestamp > ago(Lookback)
+        | where ActionType == "SecurityLogCleared"
+        | extend Evidence = "Security log cleared")
+| project Timestamp, DeviceName, DeviceId, Evidence, AccountName, FileName, ProcessCommandLine,
+          InitiatingProcessFileName, InitiatingProcessAccountName, ReportId
+| order by Timestamp desc

@@ -1,0 +1,13 @@
+# Lets other repositories use secrets-scan through the pre-commit framework:
+#
+#   repos:
+#     - repo: https://github.com/as70023333/soc-toolkit
+#       rev: v1.0.0
+#       hooks:
+#         - id: secrets-scan
+- id: secrets-scan
+  name: secrets-scan (soc-toolkit)
+  description: Block commits that contain API keys, tokens, private keys or credential files.
+  entry: secrets-scan
+  language: python
+  require_serial: true

@@ -1,0 +1,30 @@
+// Title: Run key pointing at a user-writable path or script interpreter
+// Id: KQL-TA0003-001
+// Tactic: TA0003 Persistence
+// Techniques: T1547.001
+// Platform: Defender XDR
+// Tables: DeviceRegistryEvents
+// Severity: Medium
+// Lookback: 7d
+// Description: New or changed Run / RunOnce autostart values whose command runs from AppData,
+//   Temp, Users\Public, ProgramData or Downloads, or launches a script interpreter or LOLBin.
+//   Commodity malware and many RATs persist exactly this way.
+// False positives: Per-user installers (Teams, Zoom, Slack, OneDrive, Spotify) write Run values
+//   pointing into AppData. They are signed and repeat across many devices.
+// Tuning: Extend KnownGood with your software after a week of results. Count devices per
+//   RegistryValueData: values present on hundreds of devices are usually software.
+// Response: Check the file the value points to (hash, signer, prevalence). Remove the value and the
+//   file if malicious, and look for what wrote it (InitiatingProcessFileName).
+// References: https://attack.mitre.org/techniques/T1547/001/
+let Lookback = 7d;
+let KnownGood = dynamic(["OneDrive.exe", "OneDriveSetup.exe", "Teams.exe", "ms-teams.exe", "Zoom.exe",
+    "slack.exe", "Spotify.exe", "Discord.exe", "Update.exe --processStart"]);
+DeviceRegistryEvents
+| where Timestamp > ago(Lookback)
+| where ActionType == "RegistryValueSet"
+| where RegistryKey matches regex @"(?i)\\CurrentVersion\\(Run|RunOnce|RunOnceEx|Policies\\Explorer\\Run)$"
+| where RegistryValueData matches regex @"(?i)(\\AppData\\|\\Temp\\|\\Users\\Public\\|\\ProgramData\\|\\Downloads\\|powershell|pwsh|mshta|wscript|cscript|rundll32|regsvr32|cmd(\.exe)?\s+/c)"
+| where not(RegistryValueData has_any (KnownGood))
+| project Timestamp, DeviceName, DeviceId, RegistryKey, RegistryValueName, RegistryValueData,
+          InitiatingProcessFileName, InitiatingProcessCommandLine, InitiatingProcessAccountName, ReportId
+| order by Timestamp desc

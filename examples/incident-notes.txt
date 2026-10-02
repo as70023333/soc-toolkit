@@ -1,0 +1,13 @@
+INC-2026-0412 - ransomware on WKS-FIN-001 (analyst notes, defanged, fictional)
+
+Payload (invoice_0412.exe) SHA256: 5f2b8c3e9d1a7f4b6c0e2d8a9b3f1c7e4d6a8b0c2e4f6a8b0d2c4e6f8a0b2c4d
+Dropper MD5: 7e1f3c9a2b4d6e8f0a1c3e5b7d9f1a3c
+C2 beacon every 60s to 203.0.113[.]66 (port 443)
+Fallback C2: hxxps://update-check[.]contoso-cdn[.]net/api/v2/beacon
+Dropper hosted at hxxp://198.51.100[.]23/files/inv.zip
+Phishing sender domain: micros0ft-support[.]com
+Lure link: hxxps://micros0ft-support[.]com/login/verify
+RDP brute force from 192.0.2.10 (blocked at the firewall)
+Internal host involved: 10.10.4.17
+Probably benign: the user also signed in at login.microsoftonline.com and loaded the CDN 198.51.100.200
+Signed IT inventory tool on the same host, SHA1 3c1e5a7b9d2f4e6a8c0b1d3f5a7c9e1b2d4f6a8c

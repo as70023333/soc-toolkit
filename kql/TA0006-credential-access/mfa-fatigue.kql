@@ -1,0 +1,32 @@
+// Title: MFA fatigue - repeated MFA denials, possibly followed by an approval
+// Id: KQL-TA0006-002
+// Tactic: TA0006 Credential Access
+// Techniques: T1621
+// Platform: Sentinel
+// Tables: SigninLogs
+// Severity: High
+// Lookback: 1d
+// Description: A user receiving a burst of MFA prompts that fail (500121: denied, ignored or timed
+//   out) within 30 minutes. ApprovedAfterSpam is true when a successful sign-in followed: the user
+//   gave in. The attacker already has the password.
+// False positives: A phone with a broken Authenticator app or no signal produces repeated
+//   failures, usually from the user's normal IP and location.
+// Tuning: Number matching in Microsoft Authenticator makes this attack much harder; keep the query
+//   to find accounts whose password is known to an attacker.
+// Response: Reset the password (the attacker has it), revoke sessions, and if ApprovedAfterSpam is
+//   true investigate the session: mailbox rules, MFA method changes, OAuth consents.
+// References: https://attack.mitre.org/techniques/T1621/
+let Lookback = 1d;
+let Window = 30m;
+let MinFailures = 5;
+SigninLogs
+| where TimeGenerated > ago(Lookback)
+| where ResultType in ("500121", "0")
+| summarize MfaFailures = countif(ResultType == "500121"), Successes = countif(ResultType == "0"),
+            FirstFailure = minif(TimeGenerated, ResultType == "500121"),
+            LastSuccess = maxif(TimeGenerated, ResultType == "0"),
+            IPs = make_set(IPAddress, 10), Locations = make_set(Location, 10), Apps = make_set(AppDisplayName, 5)
+            by UserPrincipalName, bin(TimeGenerated, Window)
+| where MfaFailures >= MinFailures
+| extend ApprovedAfterSpam = Successes > 0 and LastSuccess > FirstFailure
+| order by ApprovedAfterSpam desc, MfaFailures desc

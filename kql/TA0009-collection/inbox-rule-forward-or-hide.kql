@@ -1,0 +1,35 @@
+// Title: Inbox rule that forwards, redirects or hides mail
+// Id: KQL-TA0009-001
+// Tactic: TA0009 Collection
+// Techniques: T1114.003, T1564.008
+// Platform: Sentinel
+// Tables: OfficeActivity
+// Severity: High
+// Lookback: 7d
+// Description: Inbox rules or mailbox settings that forward or redirect mail, or that delete or move
+//   messages (often only those containing words like "invoice", "payment" or "hacked"). Attackers
+//   set these right after taking over a mailbox to keep watching it and hide replies from the
+//   victim, the core of business email compromise. Rules with names like "." or "" are a strong
+//   tell.
+// False positives: Users forwarding to their own personal address, assistants managing an
+//   executive's mailbox, and newsletter-sorting rules that move mail to folders.
+// Tuning: Alert on ForwardTarget outside your domains, on SuspiciousName, or on Keywords matching
+//   finance and security terms; review MoveToFolder rules weekly instead.
+// Response: Remove the rule, check the sign-ins that created it (ClientIP), reset the password and
+//   revoke sessions, then search for mail sent from the account.
+// References: https://learn.microsoft.com/security/operations/incident-response-playbook-compromised-malicious-app
+let Lookback = 7d;
+OfficeActivity
+| where TimeGenerated > ago(Lookback)
+| where OfficeWorkload == "Exchange"
+| where Operation in~ ("New-InboxRule", "Set-InboxRule", "UpdateInboxRules", "Set-Mailbox")
+| extend Params = tostring(Parameters)
+| where Params has_any ("ForwardTo", "ForwardAsAttachmentTo", "RedirectTo", "DeleteMessage", "MoveToFolder",
+                        "ForwardingSmtpAddress", "DeliverToMailboxAndForward")
+| extend RuleName = extract(@'"Name","Value":"([^"]*)"', 1, Params)
+| extend ForwardTarget = extract(@'"(?:ForwardTo|ForwardAsAttachmentTo|RedirectTo|ForwardingSmtpAddress)","Value":"([^"]*)"', 1, Params)
+| extend Keywords = extract(@'"(?:SubjectContainsWords|BodyContainsWords|SubjectOrBodyContainsWords)","Value":"([^"]*)"', 1, Params)
+// Names made only of punctuation are a common attacker habit.
+| extend SuspiciousName = Operation != "Set-Mailbox" and RuleName matches regex @"^[\s.,;:_-]{0,3}$"
+| project TimeGenerated, UserId, ClientIP, Operation, RuleName, ForwardTarget, Keywords, SuspiciousName, Params
+| order by TimeGenerated desc
