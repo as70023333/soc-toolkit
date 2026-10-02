@@ -191,4 +191,4 @@ own environment before relying on them for detection.
 
 ---
 
-Developed by **Alex S., Security** · [MIT License](LICENSE)
+Developed by **as70023333, Security Engineer** · [MIT License](LICENSE)
