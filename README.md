@@ -74,7 +74,7 @@ database server. The tools talk only to the Microsoft APIs and threat-intel feed
   reporting less.
 * **Zero dependencies.** Standard library only (`urllib`, `sqlite3`, `tomllib`), so there is no
   supply chain to audit and nothing to break on upgrade.
-* **Deterministic and tested.** Decisions are pure functions with unit tests: 92 tests run against
+* **Deterministic and tested.** Decisions are pure functions with unit tests: 93 tests run against
   a fake Microsoft Graph, Defender API, Log Analytics and nine fake threat-intel feeds, on Python
   3.11, 3.12 and 3.13.
 * **Safe with hostile data.** Attacker-controlled strings (user agents, rule names, file names)
@@ -158,7 +158,7 @@ soc-toolkit/
 │   ├── ioc_enrich/              # extract.py, providers.py (9 feeds), engine.py, cache.py; demo intel
 │   ├── secrets_scan/            # rules.py, scanner.py, gitutil.py, default_rules.toml
 │   └── kql_catalog/             # KQL linter and catalog generator
-├── tests/                       # 92 unit tests with a fake Microsoft cloud and fake feeds
+├── tests/                       # 93 unit tests with a fake Microsoft cloud and fake feeds
 ├── docs/                        # one guide per tool + Azure setup
 ├── examples/incident-notes.txt  # sample analyst notes for ioc-enrich
 ├── .secrets-scan.toml           # organization rules (SOC agent keys, feed keys, client secrets)
@@ -169,7 +169,7 @@ soc-toolkit/
 ## Development
 
 ```bash
-python -m unittest discover -s tests -t .     # 92 tests, ~2 seconds, no network
+python -m unittest discover -s tests -t .     # 93 tests, ~2 seconds, no network
 kql-catalog lint && kql-catalog check         # after editing queries (kql-catalog build to refresh)
 secrets-scan --test-rules                     # after editing .secrets-scan.toml
 ```
